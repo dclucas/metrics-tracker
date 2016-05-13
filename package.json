@@ -1,0 +1,33 @@
+{
+  "name": "metrics-tracker",
+  "version": "0.0.1",
+  "description": "An API for code metrics collection.",
+  "main": "app/app.js",
+  "scripts": {
+    "start": "node app/app.js",
+    "test": "./node_modules/.bin/cucumber.js"
+  },
+  "keywords": [
+    "metrics",
+    "API",
+    "quality",
+    "coverage"
+  ],
+  "author": "Diogo Lucas (diogo.lucas@gmail.com)",
+  "license": "MIT",
+  "dependencies": {
+    "bluebird": "^3.3.5",
+    "hapi": "^13.4.0",
+    "hapi-harvester": "^0.5.1",
+    "hapi-swagger": "^5.1.0",
+    "http-as-promised": "^1.1.0",
+    "joi": "^8.1.0",
+    "ramda": "^0.21.0",
+    "require-directory": "^2.1.1"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "cucumber": "^0.10.2",
+    "istanbul": "^0.4.3"
+  }
+}

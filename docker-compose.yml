@@ -1,0 +1,26 @@
+db:
+  log_driver: "none"
+  image: mongo:3
+  entrypoint: [ "mongod", "--smallfiles", "--rest" ]
+  expose:
+    - "27017"
+  ports:
+    - "27017:27017"
+redis:
+  log_driver: "none"
+  image: redis
+  expose:
+    - "6379"
+  ports:
+    - "6379:6379"
+web:
+  build: .
+  command: npm start
+  environment:
+    PORT: 9876
+    MONGODB_URL: 'mongodb://db:27017/fuse-features-api'
+    NODE_ENV: 'dev'    
+  ports:
+    - "9876:9876"
+  links:
+    - db

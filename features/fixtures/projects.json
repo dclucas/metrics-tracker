@@ -1,0 +1,16 @@
+{
+    "valid project": {
+        "payload": {
+            "data": {
+                "type": "orders",
+                "attributes": {
+                    "name": "foobar",
+                    "key": "fb"
+                }
+            }
+        },
+        "json-schema": {
+            
+        }
+    }
+}
