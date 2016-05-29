@@ -1,0 +1,20 @@
+{
+    "request": {
+        "data": {
+            "type": "assessments",
+            "attributes": {
+                "key": "TEST-ASSESSMENT",
+                "description": "test assessment"
+            }
+        }
+    },
+    "response": {
+        "data": {
+            "type": "assessments",
+            "attributes": {
+                "key": "TEST-ASSESSMENT",
+                "description": "test assessment"
+            }
+        }
+    }
+}

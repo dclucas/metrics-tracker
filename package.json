@@ -1,0 +1,45 @@
+{
+  "name": "hapi-harvester-boilerplate",
+  "version": "0.1.0",
+  "description": "Boilerplate app for a hapi-harvester API",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "./node_modules/.bin/istanbul cover ./node_modules/.bin/cucumber.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/agco/hapi-harvester-boilerplate.git"
+  },
+  "keywords": [
+    "api",
+    "jsonapi",
+    "boilerplate",
+    "hapi-harvester"
+  ],
+  "author": "Diogo Lucas (diogo.lucas@gmail.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/agco/hapi-harvester-boilerplate/issues"
+  },
+  "homepage": "https://github.com/agco/hapi-harvester-boilerplate#readme",
+  "dependencies": {
+    "bluebird": "^3.4.0",
+    "hapi": "^11.1.2",
+    "hapi-harvester": "^0.5.1",
+    "hapi-swagger": "^2.2.4",
+    "inert": "^3.2.0",
+    "joi": "^7.0.1",
+    "lodash": "^4.11.1",
+    "mongoose": "^4.4.19",
+    "require-directory": "^2.1.1",
+    "susie": "^2.0.0",
+    "vision": "^4.1.0"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "chai-subset": "^1.2.2",
+    "cucumber": "^0.10.3",
+    "istanbul": "^0.4.3"
+  }
+}
