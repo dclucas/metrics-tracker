@@ -11,4 +11,3 @@ Scenario Outline: posting notes
 Examples:
     | resource             | endpoint        |
     | valid assessment     | /assessments    |
-    | cucumber json report | /exams/cucumber |

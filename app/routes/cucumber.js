@@ -3,9 +3,11 @@
 const Types = require('joi');
 
 module.exports = function (server) {
-    const harvesterPlugin = server.plugins['hapi-harvester'];
-    const uuid = require('node-uuid');
-    const _ = require('lodash');
+    const 
+        _ = require('lodash'),
+        harvesterPlugin = server.plugins['hapi-harvester'],
+        Promise = require('bluebird'),
+        uuid = require('node-uuid');
 
     const cucumberSchema = Types.object().keys({
         data: Types.object().keys({
@@ -47,9 +49,6 @@ module.exports = function (server) {
     function createPayload(collectionName, key, relationships) {
         var payload = { _id: uuid.v4(), type: collectionName, attributes: { key: key } };
         if (relationships) {
-            /*payload.relationships = _.map(relationships, (r) => {
-                return { [r.name]: { data: { type: r.type, id: r.id } } }
-            });*/
             payload.relationships = {}
             _.reduce(
                 relationships, 
@@ -76,16 +75,39 @@ module.exports = function (server) {
     
     function postCucumber(req, reply) {
         const attr = req.orig.payload.data.attributes;
-        return upsertResource('subjects', attr.subjectKey)
-        .then(function(subject) {
+        var subjectP = upsertResource('subjects', attr.subjectKey)
+        var examP = subjectP.then(function(subject) {
             return upsertResource('assessments', attr.assessmentKey, [{name: 'subject', type: 'subjects', id: subject._id}]);  
         })
         .then(function(assessment) {;
             return upsertResource('exams', attr.examKey, [{name: 'assessment', type: 'assessments', id: assessment._id}]);
-        })
-        .then(function(exam) {
-            return reply(exam).code(201);
         });
+
+        var componentsP = Promise.join(examP, subjectP, function(exam, subject) {
+            var features = _.map(
+                attr.report,
+                (r) => { 
+                    return { _id: uuid.v4(), type: 'component', 
+                        attributes: { 
+                            key: r.id,
+                            type: 'feature',
+                            uri: r.uri,
+                            name: r.name,
+                            description: r.description  
+                        },
+                        relationships: {
+                            subject: { data: { type: 'subjects', id: subject.id } }
+                        } 
+                    };
+                } 
+            );
+            const model = server.plugins['hapi-harvester'].adapter.models.components;
+            return model.create(features);
+        }).then(function(features) {
+            return reply(features).code(201);
+        });
+        
+        return componentsP;
     }
 
     server.route({

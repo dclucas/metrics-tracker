@@ -8,7 +8,11 @@ module.exports = function (server) {
         schema = {
             type: 'components',
             attributes: {
-                key: Types.string().required()
+                key: Types.string().required(),
+                name: Types.string(),
+                type: Types.string(),
+                uri: Types.string(),
+                description: Types.string()
             },
             relationships: {
                 parent: { data: {type: 'components'} },

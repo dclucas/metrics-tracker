@@ -1,6 +1,9 @@
 module.exports = function () {
-    const expect = require('chai').expect;
-    _ = require('lodash');
+    const 
+        chai = require('chai')
+        expect = chai.expect,
+        _ = require('lodash');
+    chai.use(require('chai-subset'));
     
     this.Given(/^the system is up and running$/i,  function() {
         return this.server.then(function(server) {
