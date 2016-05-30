@@ -1,0 +1,149 @@
+{
+    "request": {
+        "data": {
+            "type": "cucumberExams",
+            "attributes": {
+                "assessmentKey": "TEST-BUILD-01",
+                "projectKey": "TEST-PROJECT",
+                "report": [
+                    {
+                        "id": "API-endpoints",
+                        "name": "API endpoints",
+                        "description": "  As an API client\n  I want to perform basic CRUD operations",
+                        "line": 1,
+                        "keyword": "Feature",
+                        "uri": "/Users/lucasd/src/oss/dclucas/metrics-tracker/features/general.feature",
+                        "elements": [
+                            {
+                                "name": "posting notes",
+                                "id": "API-endpoints;posting-notes",
+                                "line": 13,
+                                "keyword": "Scenario",
+                                "description": "",
+                                "type": "scenario",
+                                "steps": [
+                                    {
+                                        "name": "a valid assessment payload",
+                                        "line": 6,
+                                        "keyword": "Given ",
+                                        "result": {
+                                            "status": "passed",
+                                            "duration": 3627195
+                                        },
+                                        "match": {
+                                            "location": "/Users/lucasd/src/oss/dclucas/metrics-tracker/features/step_definitions/general.js:39"
+                                        }
+                                    },
+                                    {
+                                        "name": "I POST it against the /assessments endpoint",
+                                        "line": 7,
+                                        "keyword": "When ",
+                                        "result": {
+                                            "status": "passed",
+                                            "duration": 243655693
+                                        },
+                                        "match": {
+                                            "location": "/Users/lucasd/src/oss/dclucas/metrics-tracker/features/step_definitions/general.js:26"
+                                        }
+                                    },
+                                    {
+                                        "name": "I receive a 201 status code",
+                                        "line": 8,
+                                        "keyword": "Then ",
+                                        "result": {
+                                            "status": "passed",
+                                            "duration": 671193
+                                        },
+                                        "match": {
+                                            "location": "/Users/lucasd/src/oss/dclucas/metrics-tracker/features/step_definitions/general.js:22"
+                                        }
+                                    },
+                                    {
+                                        "name": "a payload containing the newly created resource",
+                                        "line": 9,
+                                        "keyword": "And ",
+                                        "result": {
+                                            "status": "passed",
+                                            "duration": 662936
+                                        },
+                                        "match": {
+                                            "location": "/Users/lucasd/src/oss/dclucas/metrics-tracker/features/step_definitions/general.js:35"
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "id": "health-check",
+                        "name": "health check",
+                        "description": "  As an API client\n  I want to know when the app is running fine",
+                        "line": 1,
+                        "keyword": "Feature",
+                        "uri": "/Users/lucasd/src/oss/dclucas/metrics-tracker/features/healthcheck.feature",
+                        "elements": [
+                            {
+                                "name": "checking the /healthcheck endpoint",
+                                "id": "health-check;checking-the-/healthcheck-endpoint",
+                                "line": 5,
+                                "keyword": "Scenario",
+                                "description": "",
+                                "type": "scenario",
+                                "steps": [
+                                    {
+                                        "name": "the system is up and running",
+                                        "line": 6,
+                                        "keyword": "Given ",
+                                        "result": {
+                                            "status": "passed",
+                                            "duration": 112966019
+                                        },
+                                        "match": {
+                                            "location": "/Users/lucasd/src/oss/dclucas/metrics-tracker/features/step_definitions/general.js:5"
+                                        }
+                                    },
+                                    {
+                                        "name": "I do a GET against the /healthcheck endpoint",
+                                        "line": 7,
+                                        "keyword": "When ",
+                                        "result": {
+                                            "status": "passed",
+                                            "duration": 13888667
+                                        },
+                                        "match": {
+                                            "location": "/Users/lucasd/src/oss/dclucas/metrics-tracker/features/step_definitions/general.js:13"
+                                        }
+                                    },
+                                    {
+                                        "name": "I receive a 200 status code",
+                                        "line": 8,
+                                        "keyword": "Then ",
+                                        "result": {
+                                            "status": "passed",
+                                            "duration": 163539
+                                        },
+                                        "match": {
+                                            "location": "/Users/lucasd/src/oss/dclucas/metrics-tracker/features/step_definitions/general.js:22"
+                                        }
+                                    },
+                                    {
+                                        "name": "a payload containing a 'green' status",
+                                        "line": 9,
+                                        "keyword": "And ",
+                                        "result": {
+                                            "status": "passed",
+                                            "duration": 167230
+                                        },
+                                        "match": {
+                                            "location": "/Users/lucasd/src/oss/dclucas/metrics-tracker/features/step_definitions/healthcheck.js:4"
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+    }
+}
