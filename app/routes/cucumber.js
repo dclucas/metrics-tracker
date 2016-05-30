@@ -71,17 +71,22 @@ module.exports = function (server) {
         });
     }
     
-    function mapComponent(r, subjectId) {
+    function mapComponentAttributes(reportItem) {
+        return { 
+            key: reportItem.id,
+            type: reportItem.keyword,
+            uri: reportItem.uri,
+            name: reportItem.name,
+            description: reportItem.description,
+            subcomponents: reportItem.elements? _.map(reportItem.elements, mapComponentAttributes) : undefined
+        };
+    }
+    
+    function mapComponent(reportItem, subjectId) {
         return { 
             _id: uuid.v4(), 
             type: 'component', 
-            attributes: { 
-                key: r.id,
-                type: r.keyword,
-                uri: r.uri,
-                name: r.name,
-                description: r.description
-            },
+            attributes: mapComponentAttributes(reportItem),
             relationships: {
                 subject: { data: { type: 'subjects', id: subjectId } }
             } 
@@ -99,21 +104,9 @@ module.exports = function (server) {
         });
 
         var componentsP = Promise.join(examP, subjectP, function(exam, subject) {
-            var scenarios = [];
-            var features = _.map(
-                attr.report,
-                (r) => {
-                    var c = mapComponent(r, subject.id);
-                    // todo: this is full of state processing -- refactor towards a more functional style
-                    scenarios = _.concat(scenarios, _.map(r.elements, (e) =>
-                        _.set(mapComponent(e, subject.id), 'relationships.parent.data', { id: c._id, type: 'components' })
-                    ));
-                    return c;
-                } 
-            );
-            
             const model = server.plugins['hapi-harvester'].adapter.models.components;
-            return model.create(_.concat(features, scenarios));
+            var features = _.map(attr.report, mapComponent);
+            return model.create(features);            
         });
         
         return componentsP.then(function(features) {
