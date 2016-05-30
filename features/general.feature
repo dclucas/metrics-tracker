@@ -9,5 +9,6 @@ Scenario Outline: posting notes
     And a payload containing the newly created resource
     
 Examples:
-    | resource         | endpoint      |
-    | valid assessment | /assessments  |  
+    | resource             | endpoint        |
+    | valid assessment     | /assessments    |
+    | cucumber json report | /exams/cucumber |

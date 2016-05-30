@@ -46,6 +46,19 @@ module.exports = function (server) {
 
     function createPayload(collectionName, key, relationships) {
         var payload = { _id: uuid.v4(), type: collectionName, attributes: { key: key } };
+        if (relationships) {
+            /*payload.relationships = _.map(relationships, (r) => {
+                return { [r.name]: { data: { type: r.type, id: r.id } } }
+            });*/
+            payload.relationships = {}
+            _.reduce(
+                relationships, 
+                (p, r) => p.relationships[r.name] = { data: { type: r.type, id: r.id } },
+                payload
+            );
+        }
+        var x = { "title": "t" };
+        var y = JSON.stringify(x.y = { "description": "d" });
         return payload;
     }
 
@@ -57,22 +70,21 @@ module.exports = function (server) {
             if (doc) 
                 return doc;
             else
-                return new model(createPayload(key, relationships)).save();
+                return new model(createPayload(collectionName, key, relationships)).save();
         });
     }
     
-    // "relationships": { "photographer": { "data": { "type": "people", "id": "9" } } }    
     function postCucumber(req, reply) {
         const attr = req.orig.payload.data.attributes;
-        return upsertResource('subjects', attr.subjectKey, null)
+        return upsertResource('subjects', attr.subjectKey)
         .then(function(subject) {
-            return upsertResource('assessments', attr.assessmentKey, null);  
+            return upsertResource('assessments', attr.assessmentKey, [{name: 'subject', type: 'subjects', id: subject._id}]);  
         })
         .then(function(assessment) {;
-            return upsertResource('exams', attr.examKey, null);
+            return upsertResource('exams', attr.examKey, [{name: 'assessment', type: 'assessments', id: assessment._id}]);
         })
         .then(function(exam) {
-            return reply(exam);
+            return reply(exam).code(201);
         });
     }
 

@@ -11,7 +11,6 @@ module.exports = function (server) {
                 key: Types.string().required()
             },
             relationships: {
-                measurements: { data: [{type: 'measurementss'}] },
                 assessment: { data: {type: 'assessmentss'} }                     
             }
         }

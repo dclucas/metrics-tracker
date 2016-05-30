@@ -5,6 +5,11 @@
             "attributes": {
                 "key": "TEST-ASSESSMENT",
                 "description": "test assessment"
+            },
+            "relationships": {
+                "subject": {
+                     "data": { "type": "subjects", "id": "5a28a548-2b18-4ac5-9692-591b336b0707" }
+                }
             }
         }
     },
@@ -14,6 +19,11 @@
             "attributes": {
                 "key": "TEST-ASSESSMENT",
                 "description": "test assessment"
+            },
+            "relationships": {
+                "subject": {
+                     "data": { "type": "subjects", "id": "5a28a548-2b18-4ac5-9692-591b336b0707" }
+                }
             }
         }
     }

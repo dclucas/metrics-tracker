@@ -4,7 +4,8 @@
             "type": "cucumberExams",
             "attributes": {
                 "assessmentKey": "TEST-BUILD-01",
-                "projectKey": "TEST-PROJECT",
+                "examKey": "cucumber",
+                "subjectKey": "TEST-PROJECT",
                 "report": [
                     {
                         "id": "API-endpoints",
@@ -19,7 +20,7 @@
                                 "id": "API-endpoints;posting-notes",
                                 "line": 13,
                                 "keyword": "Scenario",
-                                "description": "",
+                                "description": "foo bar",
                                 "type": "scenario",
                                 "steps": [
                                     {
@@ -87,7 +88,7 @@
                                 "id": "health-check;checking-the-/healthcheck-endpoint",
                                 "line": 5,
                                 "keyword": "Scenario",
-                                "description": "",
+                                "description": "barfoo",
                                 "type": "scenario",
                                 "steps": [
                                     {
@@ -145,5 +146,7 @@
                 ]
             }
         }
+    },
+    "response": {
     }
 }

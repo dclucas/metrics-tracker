@@ -1,10 +1,3 @@
-/*
-
-var config = require('./app/config');
-var harvesterApp = require('./app/api')(config);
-
-module.exports = harvesterApp;
- */
 function World() {
 	const cfg = require('../../app/config');
     this.server = require('../../app/api')(cfg);
