@@ -38,11 +38,23 @@ module.exports = function () {
     });
     
     this.When(/^I map it with the mapCucumber method$/, function() {
-        cucumberMapper.mapCucumber(this.fixture.request);
+        this.result = cucumberMapper.mapCucumber(this.fixture.request);
     });
+
+    function checkResource(resource, expected) {
+        expect(resource).to.not.be.undefined;
+        expect(resource.type).to.equal(expected.type);
+        expect(resource._id).to.not.be.undefined;
+        expect(resource.attributes).to.containSubset(expected.attributes);
+        expect(resource.relationships).to.containSubset(expected.relationships);
+    };
     
-    /*
-    this.Then(/^I receive a correctly mapped set of entities$/, function() {
-    });
-    */
+    this.Then(/^I receive a correctly mapped set of entities$/, function () {
+        const result = this.result;
+        expect(result).to.not.be.undefined;
+        checkResource(result.subject, { type: "subjects", attributes: { key: "TEST-PROJECT" }});
+        checkResource(result.assessment, { type: "assessments", attributes: { key: "TEST-BUILD-01" }, relationships: { subject: { data: { type: 'subjects', id: result.subject._id } }}});
+        checkResource(result.exam, { type: "exams", attributes: { key: "cucumber" }, relationships: { assessment: { data: { type: 'assessments', id: result.assessment._id } }}});
+        expect(result.components).to.not.be.undefined;
+    });    
 };

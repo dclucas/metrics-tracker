@@ -1,0 +1,23 @@
+db:
+  log_driver: "none"
+  image: mongo:3
+  entrypoint: [ "mongod", "--smallfiles", "--rest" ]
+  expose:
+    - "27017"
+  ports:
+    - "27017:27017"
+
+web:
+  build: .
+  command: npm start
+  environment:
+    USE_LOCAL_REPO: 'true'
+    PORT: 2426
+    MONGODB_URL: 'mongodb://db:27017/fuse-features-api'
+    MONGODB_OPLOG: 'mongodb://db:27017/local'
+    NODE_ENV: 'dev'
+    NPM_CONFIG_PRODUCTION: 'false'    
+  ports:
+    - "2426:2426"
+  links:
+    - db
