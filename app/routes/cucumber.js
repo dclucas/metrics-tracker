@@ -7,7 +7,8 @@ module.exports = function (server) {
         _ = require('lodash'),
         harvesterPlugin = server.plugins['hapi-harvester'],
         Promise = require('bluebird'),
-        uuid = require('node-uuid');
+        uuid = require('node-uuid'),
+        mapper = require('../utils/general-mapper');
 
     const cucumberSchema = Types.object().keys({
         data: Types.object().keys({
@@ -82,15 +83,23 @@ module.exports = function (server) {
         };
     }
     
-    function mapComponent(reportItem, subjectId) {
+    function mapComponent(reportItem, subjectId, rootId) {
         return { 
             _id: uuid.v4(), 
             type: 'component', 
             attributes: mapComponentAttributes(reportItem),
             relationships: {
-                subject: { data: { type: 'subjects', id: subjectId } }
+                subject: { data: { type: 'subjects', id: subjectId } },
+                parent: rootId? {} : undefined
             } 
         };
+    }
+    
+    function mapComponentTree(reportItem, subjectId) {
+        var rootId = uuid.v4();
+        return _.concat(
+            _.map(reportItem.elements, (r) => mapComponent(r, subjectId, rootId)),
+            mapComponent(reportItem, subjectId));
     }
     
     function postCucumber(req, reply) {
@@ -105,8 +114,12 @@ module.exports = function (server) {
 
         var componentsP = Promise.join(examP, subjectP, function(exam, subject) {
             const model = server.plugins['hapi-harvester'].adapter.models.components;
-            var features = _.map(attr.report, mapComponent);
+            var features = _.flatMap(attr.report, (r) => mapComponentTree(r, subject._id));
             return model.create(features);            
+        });
+        
+        var measurementsP = componentsP.then(function (components) { 
+            
         });
         
         return componentsP.then(function(features) {

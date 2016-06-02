@@ -8,7 +8,8 @@ module.exports = function (server) {
         schema = {
             type: 'measurements',
             attributes: {
-                value: Types.number()
+                value: Types.number(),
+                type: Types.string().required(),
             },
             relationships: {
                 exam: { data: {type: 'exams'} },
