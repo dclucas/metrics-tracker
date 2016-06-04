@@ -83,15 +83,42 @@ module.exports = function (server) {
         };
     }
     
-    function mapComponent(reportItem, subjectId, rootId) {
-        return { 
-            _id: uuid.v4(), 
-            type: 'component', 
-            attributes: mapComponentAttributes(reportItem),
+    function mapStep(step, componentId) {
+        // todo: consider a new endpoint (checks)
+        // for these pass/fail situations
+        return {
+            _id: uuid.v4(),
+            type: 'checks',
+            attributes: {
+                type: 'cucumber-step',
+                status: step.result.status,
+                duration: step.result.duration,
+                details: step.name
+            },
             relationships: {
-                subject: { data: { type: 'subjects', id: subjectId } },
-                parent: rootId? {} : undefined
-            } 
+                component: {
+                    data: {
+                        type: 'components',
+                        id: componentId
+                    }
+                }
+            }
+        }    
+    }
+    
+    function mapComponent(reportItem, subjectId, rootId) {
+        var id = uuid.v4();
+        return { 
+            payload: { 
+                _id: id, 
+                type: 'component', 
+                attributes: mapComponentAttributes(reportItem),
+                relationships: {
+                    subject: { data: { type: 'subjects', id: subjectId } },
+                    parent: rootId? {} : undefined
+                } 
+            },
+            steps: _.map(reportItem.step, (r) => mapStep(r, id))
         };
     }
     
@@ -115,7 +142,7 @@ module.exports = function (server) {
         var componentsP = Promise.join(examP, subjectP, function(exam, subject) {
             const model = server.plugins['hapi-harvester'].adapter.models.components;
             var features = _.flatMap(attr.report, (r) => mapComponentTree(r, subject._id));
-            return model.create(features);            
+            return model.create(_.map(features, (f) => f.payload));         
         });
         
         var measurementsP = componentsP.then(function (components) { 
