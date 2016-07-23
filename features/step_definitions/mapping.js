@@ -49,6 +49,23 @@ module.exports = function () {
         expect(resource.relationships).to.containSubset(expected.relationships);
     };
     
+    function checkCollection(collection, expected) {
+        const expectedLenght = _.keys(expected).length;
+        expect(collection.length).to.equal(expectedLenght);
+        const matches = _.reduce(
+            collection, 
+            (aggregation, item) => {
+                expect(aggregation[key]).to.be.undefined;
+                const key = item.attributes.key;
+                aggregation.push({ expected: expected[key], result: item });
+                return aggregation;
+            },
+            []);
+        expect(matches.length).to.equal(expectedLenght);
+        
+        _.forEach(matches, (m) => checkResource(m.result,m.expected));
+    }
+    
     this.Then(/^I receive a correctly mapped set of entities$/, function () {
         const result = this.result;
         expect(result).to.not.be.undefined;
@@ -56,5 +73,45 @@ module.exports = function () {
         checkResource(result.assessment, { type: "assessments", attributes: { key: "TEST-BUILD-01" }, relationships: { subject: { data: { type: 'subjects', id: result.subject._id } }}});
         checkResource(result.exam, { type: "exams", attributes: { key: "cucumber" }, relationships: { assessment: { data: { type: 'assessments', id: result.assessment._id } }}});
         expect(result.components).to.not.be.undefined;
+        expect(result.checks).to.not.be.undefined;
+        const expectedComponents = {
+            "API-endpoints": {
+                type: "component",
+                attributes: {
+                    type: "Feature"                    
+                },
+                relationships: {
+                    subject: { data: { type: "subjects", id: result.subject._id } }
+                }
+            },
+            "API-endpoints;posting-notes": {
+                type: "component",
+                attributes: {
+                    type: "Scenario"
+                },
+                relationships: {
+                    subject: { data: { type: "subjects", id: result.subject._id } }
+                }
+            },
+            "health-check": {
+                type: "component",
+                attributes: {
+                    type: "Feature"
+                },
+                relationships: {
+                    subject: { data: { type: "subjects", id: result.subject._id } }
+                }
+            },
+            "health-check;checking-the-/healthcheck-endpoint": {
+                type: "component",
+                attributes: {
+                    type: "Scenario"
+                },
+                relationships: {
+                    subject: { data: { type: "subjects", id: result.subject._id } }
+                }
+            }            
+        }
+        checkCollection(result.components, expectedComponents);
     });    
 };

@@ -150,7 +150,7 @@ module.exports = function (server) {
         });
         
         return componentsP.then(function(features) {
-            return reply(features).code(201);
+            return reply().code(202);
         });
     }
 

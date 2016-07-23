@@ -39,6 +39,11 @@ module.exports = function () {
         expect(this.response.body).to.containSubset(this.fixture.request);
     });
     
+    this.Then(/^a payload containing all newly created resources$/, function (callback) {
+         // Write code here that turns the phrase above into concrete actions
+         callback(null, 'pending');
+       });
+    
     this.Given(/^a (.*) payload$/, function (resource) {
         this.fixture = require('../fixtures/' + _.kebabCase(resource));
     });
