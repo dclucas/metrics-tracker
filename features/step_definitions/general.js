@@ -1,6 +1,9 @@
 module.exports = function () {
-    const expect = require('chai').expect;
-    _ = require('lodash');
+    const 
+        chai = require('chai')
+        expect = chai.expect,
+        _ = require('lodash');
+    chai.use(require('chai-subset'));
     
     this.Given(/^the system is up and running$/i,  function() {
         return this.server.then(function(server) {
@@ -35,6 +38,11 @@ module.exports = function () {
     this.Then(/^a payload containing the newly created resource$/, function () {
         expect(this.response.body).to.containSubset(this.fixture.request);
     });
+    
+    this.Then(/^a payload containing all newly created resources$/, function (callback) {
+         // Write code here that turns the phrase above into concrete actions
+         callback(null, 'pending');
+       });
     
     this.Given(/^a (.*) payload$/, function (resource) {
         this.fixture = require('../fixtures/' + _.kebabCase(resource));

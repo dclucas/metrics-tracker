@@ -1,0 +1,8 @@
+db:
+  log_driver: "none"
+  image: mongo:3
+  entrypoint: [ "mongod", "--smallfiles", "--rest" ]
+  expose:
+    - "27017"
+  ports:
+    - "27017:27017"

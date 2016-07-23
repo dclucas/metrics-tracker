@@ -10,6 +10,9 @@ module.exports = function (server) {
             attributes: {
                 key: Types.string().required(),
                 description: Types.string().required()
+            },
+            relationships: {
+                subject: { data: {type: 'subjects'} }
             }
         }
 

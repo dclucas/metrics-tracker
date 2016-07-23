@@ -6,10 +6,12 @@ module.exports = function (server) {
     const 
         harvesterPlugin = server.plugins['hapi-harvester'],
         schema = {
-            type: 'measurements',
+            type: 'checks',
             attributes: {
-                value: Types.number(),
+                status: Types.string(),
                 type: Types.string().required(),
+                duration: Types.number(),
+                name: Types.string()
             },
             relationships: {
                 exam: { data: {type: 'exams'} },
