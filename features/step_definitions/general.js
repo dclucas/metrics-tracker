@@ -6,11 +6,7 @@ module.exports = function () {
     chai.use(require('chai-subset'));
     
     this.Given(/^the system is up and running$/i,  function() {
-        return this.server.then(function(server) {
-            // checking the 'up' server flag
-            expect(server.info.started).to.be.above(0);
-            return server;
-        });
+        // no op here, as the server is started outside the suite
     });
     
     this.When(/^I do a (\w+) against the \/(.*) endpoint$/, function (verb, endpoint) {

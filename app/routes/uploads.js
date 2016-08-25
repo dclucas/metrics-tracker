@@ -106,7 +106,7 @@ module.exports = function (server) {
         },
         
         handler: function(request, reply) {
-            console.log(request);
+            //console.log(request);
             return reply("ok");
             /*
             return getObject(request)

@@ -11,5 +11,13 @@ module.exports = function() {
     this.When(/^I send it to the cucumber upload endpoint$/, function () {
         //return this.doHttpRequest(`upload/cucumber?assessmentKey=${this.assessmentKey}`, "POST", this.fileContents);
         return this.uploadTo(`upload/cucumber?assessmentKey=${this.assessmentKey}`, this.fileContents);
-    });    
+    });
+
+    this.Then(/^I receive a success response$/, function () {
+        // no action
+    });
+
+    this.Then(/^all relevant data gets created$/, function (callback) {
+        callback(null, 'pending');
+    });
 }

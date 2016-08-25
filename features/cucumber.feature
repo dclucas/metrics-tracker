@@ -6,6 +6,6 @@ Scenario: posting notes
     Given a cucumber report file
     And a new assessment key
     When I send it to the cucumber upload endpoint
-    Then I receive a 202 status code
+    Then I receive a success response
     And all relevant data gets created
     
