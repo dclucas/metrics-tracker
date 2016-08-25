@@ -1,5 +1,174 @@
 'use strict';
+const 
+    fs = require('fs'),
+    Joi = require('joi');
 
+function streamToString(stream, cb) {
+    return new Promise(function(resolve, reject){
+        const chunks = [];
+        stream.on('data', (chunk) => {
+            chunks.push(chunk.toString());
+        });
+        stream.on('end', () => {
+            resolve(chunks.join(''));
+        });
+    });
+}
+
+function getObject(request) {
+    const data = request.payload;
+    if (data.file) {
+        return streamToString(data.file)
+        .then(function(str) {
+            return JSON.parse(str);
+        });
+    }
+    return Promise.reject();
+}
+
+function validateObject(object, schema) {
+    return new Promise(function(resolve, reject) {
+        Joi.validate(object, schema, function (err, value) {
+            if (err) reject(err);
+            resolve(object);
+        });
+    })
+}
+
+const cucumberSchema = Joi.array().items(Joi.object().keys({
+    id: Joi.string().required(),
+    name: Joi.string().required(),
+    description: Joi.string(),
+    line: Joi.number().integer(),
+    keyword: Joi.string(),
+    uri: Joi.string(),
+    elements: Joi.array().items(Joi.object().keys({
+        name: Joi.string().required(),
+        id: Joi.string().required(),
+        line: Joi.number().integer(),
+        keyword: Joi.string(),
+        description: Joi.string(),
+        type: Joi.string().required(),
+        steps: Joi.array().items(Joi.object().keys({
+            name: Joi.string(),
+            line: Joi.number().integer(),
+            keyword: Joi.string(),
+            result: Joi.object().keys({
+                status: Joi.string(),
+                duration: Joi.number().integer()
+            }),
+            match: Joi.object().keys({
+                location: Joi.string()
+            })
+        }))
+    }))
+}));
+/*
+const cucumberSchema = Joi.array().items(Joi.object().keys({
+    id: Joi.string().required(),
+    name: Joi.string().required(),
+    description: Joi.string(),
+    line: Joi.number().integer(),
+    keyword: Joi.string(),
+    uri: Joi.string(),
+    elements: Joi.array().items(Joi.object().keys({
+        name: Joi.string().required(),
+        id: Joi.string().required(),
+        line: Joi.number().integer(),
+        keyword: Joi.string(),
+        description: Joi.string(),
+        type: Joi.string().required(),
+        steps: Joi.array().items(Joi.object().keys({
+            name: Joi.string(),
+            line: Joi.number().integer(),
+            keyword: Joi.string(),
+            result: Joi.object().keys({
+                status: Joi.string(),
+                duration: Joi.number().integer()
+            }),
+            match: Joi.object().keys({ location: Joi.string() })
+        }))
+    }))
+}))
+*/
+
+module.exports = function (server) {
+    server.route({
+        method: 'POST',
+        path: '/upload/cucumber',
+        config: {
+            tags: ['upload'],
+            payload: {
+                //allow: ['multipart/form-data'],
+                parse: true,
+                output: 'stream'
+            }
+        },
+        
+        handler: function(request, reply) {
+            console.log(request);
+            return reply("ok");
+            /*
+            return getObject(request)
+            .then(o => validateObject(o, cucumberSchema))
+            .catch(e => reply(e.message).statusCode(429))
+            .then(function(o) {
+                console.log(o);
+                return reply("done").code(202);
+            });
+            */
+        }
+    });
+}
+/*
+var fs = require('fs');
+var Hapi = require('hapi');
+
+var server = Hapi.createServer('localhost', Number(process.argv[2] || 8080));
+
+server.route({
+    method: 'POST',
+    path: '/submit',
+    config: {
+
+        payload: {
+            output: 'stream',
+            parse: true,
+            allow: 'multipart/form-data'
+        },
+
+        handler: function (request, reply) {
+            var data = request.payload;
+            if (data.file) {
+                var name = data.file.hapi.filename;
+                var path = __dirname + "/uploads/" + name;
+                var file = fs.createWriteStream(path);
+
+                file.on('error', function (err) { 
+                    console.error(err) 
+                });
+
+                data.file.pipe(file);
+
+                data.file.on('end', function (err) { 
+                    var ret = {
+                        filename: data.file.hapi.filename,
+                        headers: data.file.hapi.headers
+                    }
+                    reply(JSON.stringify(ret));
+                })
+            }
+
+        }
+    }
+});
+
+server.start(function () {
+    console.log('info', 'Server running at: ' + server.info.uri);
+});
+
+*/
+/*
 const Types = require('joi');
 
 module.exports = function (server) {
@@ -10,7 +179,7 @@ module.exports = function (server) {
         uuid = require('node-uuid'),
         mapper = require('../utils/general-mapper');
 
-    const cucumberSchema = Types.array().items(Types.object().keys({
+    const cucumberSchema = Types.object().keys({
         data: Types.object().keys({
             type: 'cucumberExams',
             attributes: Types.object({
@@ -45,7 +214,7 @@ module.exports = function (server) {
                 }))
             })
         }).required()
-    }));
+    })
 
     function createPayload(collectionName, key, relationships) {
         var payload = { _id: uuid.v4(), type: collectionName, attributes: { key: key } };
@@ -167,3 +336,4 @@ module.exports = function (server) {
         }
     });
 }
+*/

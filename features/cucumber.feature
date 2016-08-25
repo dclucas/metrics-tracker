@@ -3,7 +3,9 @@ Feature: Cucumber reports
     I want to upload cucumber reports
     
 Scenario: posting notes
-    Given a cucumber json report payload
-    When I POST it against the /exams/cucumber endpoint
+    Given a cucumber report file
+    And a new assessment key
+    When I send it to the cucumber upload endpoint
     Then I receive a 202 status code
+    And all relevant data gets created
     
