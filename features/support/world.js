@@ -1,7 +1,8 @@
 function World() {
-	const cfg = require('../../app/config');
-	
-	var should = require('chai').should();
+	const 
+        cfg = require('../../app/config'),
+        request = require('request'),
+        should = require('chai').should();
     
 	this.doHttpRequest = function (endpoint, verb, payload) {
         const 
@@ -17,26 +18,18 @@ function World() {
 	};
 
     this.uploadTo = function(endpoint, payload) {
-        return new Promise((resolve, reject) => {
-            const spawn = require('child_process').spawn;
-            //const ls = spawn('curl', ['-X POST', '-F file=@features/fixtures/cucumber.json', 'http://localhost:2426/upload/cucumber?assessmentKey=17215175-ca39-4932-b5c9-d5ebf1a4882b']);
-            const ls = spawn('curl', [
-                '-X POST',
-                '-s',
-                '-o /dev/null', 
-                '-w "%{http_code}"', 
-                '-F file=@features/fixtures/cucumber.json', 
-                'http://localhost:2426/upload/cucumber'
-                ]);
-
-            ls.stdout.on('data', (data) => {
-                resolve(data.toString('utf8'));
+        const 
+            formData = { cucumber: payload };
+        return new Promise(function(resolve, reject) {
+            request({
+                method: 'POST',
+                url: 'http://localhost:2426/upload/cucumber', 
+                formData: formData
+            }, function(err, httpResponse, body){
+                if (err) return reject(err);
+                return resolve(httpResponse);            
             });
-
-            ls.stderr.on('data', (data) => {
-                reject(data.toString('utf8'));
-            });
-        })
+        });
     };
 }
 

@@ -9,8 +9,11 @@ module.exports = function() {
     });
 
     this.When(/^I send it to the cucumber upload endpoint$/, function () {
-        //return this.doHttpRequest(`upload/cucumber?assessmentKey=${this.assessmentKey}`, "POST", this.fileContents);
-        return this.uploadTo(`upload/cucumber?assessmentKey=${this.assessmentKey}`, this.fileContents);
+        const p = this.uploadTo(`upload/cucumber?assessmentKey=${this.assessmentKey}`, this.fileContents);
+        return p.then(response => {
+            this.response = response;
+            return response;
+        });
     });
 
     this.Then(/^I receive a success response$/, function () {

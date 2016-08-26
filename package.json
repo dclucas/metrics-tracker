@@ -37,6 +37,7 @@
     "node-libcurl": "^1.0.0",
     "node-uuid": "^1.4.7",
     "ramda": "^0.22.1",
+    "request": "^2.74.0",
     "require-directory": "^2.1.1",
     "rx": "^4.1.0",
     "susie": "^2.0.0",
