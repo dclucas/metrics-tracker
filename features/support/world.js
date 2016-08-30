@@ -18,6 +18,11 @@ function World() {
         });
 	};
 
+    this.getByKey = function(resourceName, key) {
+        return this.doHttpRequest(`${resourceName}?filter[key]=${key}`, 'GET')
+        .spread(response => response);
+    }
+
     this.uploadTo = function(endpoint, filePath) {
         const 
             fp = require('path').resolve(__dirname, filePath),

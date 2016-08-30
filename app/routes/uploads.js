@@ -1,5 +1,7 @@
 'use strict';
 const 
+    Emitter = require('../utils/emitter'),
+    emitter = new Emitter(),
     fs = require('fs'),
     Joi = require('joi');
 
@@ -35,6 +37,33 @@ function validateObject(object, schema) {
     })
 }
 
+function mapCucumberReport(object, assessmentKey, subjectKey, examKey) {
+    return {
+        assessment: {
+            key: assessmentKey
+        },
+        subject: {
+            key: subjectKey
+        },
+        exam: {
+            key: examKey
+        }
+    };
+}
+
+
+/*
+function saveReportResources(resources) {
+    const
+        adapter = server.plugins['hapi-harvester'].adapter,
+        assessmentModel = adapter.models.assessments;
+    return new assessmentModel(resources.assessment).save()
+    .then(m => {
+        return reply().code(202);
+    });
+}
+*/
+
 const cucumberSchema = Joi.array().items(Joi.object().keys({
     id: Joi.string().required(),
     name: Joi.string().required(),
@@ -65,6 +94,62 @@ const cucumberSchema = Joi.array().items(Joi.object().keys({
 }));
 
 module.exports = function (server) {
+    function idempotentSave(payload, collection, filter) {
+        const
+            adapter = server.plugins['hapi-harvester'].adapter,
+            model = adapter.models[collection],
+            query = model.findOne(filter || {"attributes.key": payload.attributes.key});
+        
+        return query.exec()
+        .then((doc) => {
+            if (!doc) {
+                // fixme: handle concurrent saves (multiple parallel calls might cause saves to be fired multiple times)
+                return new model(payload).save();
+            }
+            return doc._doc;
+        })
+    }
+
+    function handleSubject(report) {
+        return idempotentSave({ attributes: { key: report.subjectKey }}, 'subjects');
+    }
+
+    function handleAssessment(report, subject) {
+        return idempotentSave(
+            { 
+                attributes: { key: report.assessmentKey },
+                relationships: {
+                    subject: { data: { id: subject._id, type: 'subjects' } }
+                }
+            }, 
+            'assessments', 
+            { 
+                'attributes.key': report.assessmentKey,
+                'relationships.subject.data.id': subject._id 
+            });
+    }
+
+    function handleExam(report, assessment) {
+        return idempotentSave(
+            { 
+                attributes: { key: report.examKey },
+                relationships: {
+                    assessment: { data: { id: assessment._id, type: 'assessments' } }
+                }
+            }, 
+            'exams', 
+            { 
+                'attributes.key': report.examKey,
+                'relationships.assessment.data.id': assessment._id 
+            });
+    }
+
+    emitter.listen('uploads/cucumber', report => {
+        handleSubject(report)
+        .then(s => handleAssessment(report, s))
+        .then(a => handleExam(report, a));
+    });
+
     server.route({
         method: 'POST',
         path: '/upload/cucumber',
@@ -74,19 +159,29 @@ module.exports = function (server) {
                 //allow: ['multipart/form-data'],
                 parse: true,
                 output: 'stream'
+            },
+            validate: {
+                query: {
+                    assessmentKey: Joi.string().required(),
+                    subjectKey: Joi.string().required(),
+                    examKey: Joi.string().required()
+                }
             }
         },
-        
         handler: function(request, reply) {
-            console.log(request);
             return getObject(request)
             //fixme: change status code to something more significant
             .catch(e => reply(e.message).statusCode(429))
             .then(o => validateObject(o, cucumberSchema))
             .catch(e => reply(e.message).statusCode(429))
             .then(function(o) {
-                console.log(o);
-                return reply("done").code(202);
+                emitter.emit('uploads/cucumber', {
+                    assessmentKey: request.query.assessmentKey,
+                    examKey: request.query.examKey,
+                    subjectKey: request.query.subjectKey,
+                    report: o
+                });
+                return reply().code(202);
             });
         }
     });
