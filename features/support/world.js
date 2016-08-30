@@ -1,6 +1,7 @@
 function World() {
 	const 
         cfg = require('../../app/config'),
+        fs = require('fs'),
         request = require('request'),
         should = require('chai').should();
     
@@ -17,13 +18,14 @@ function World() {
         });
 	};
 
-    this.uploadTo = function(endpoint, payload) {
+    this.uploadTo = function(endpoint, filePath) {
         const 
-            formData = { cucumber: payload };
+            fp = require('path').resolve(__dirname, filePath),
+            formData = { cucumber: fs.createReadStream(fp) };
         return new Promise(function(resolve, reject) {
             request({
                 method: 'POST',
-                url: 'http://localhost:2426/upload/cucumber', 
+                url: `http://localhost:2426/${endpoint}`, 
                 formData: formData
             }, function(err, httpResponse, body){
                 if (err) return reject(err);

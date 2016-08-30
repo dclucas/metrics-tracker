@@ -1,7 +1,8 @@
 module.exports = function() {
     const uuid = require('uuid');
     this.Given(/^a cucumber report file$/, function () {
-        this.fileContents = require('../fixtures/cucumber.json');
+        //this.fileContents = require('../fixtures/cucumber.json');
+        this.filePath = '../fixtures/cucumber.json';
     });
 
     this.Given(/^a new assessment key$/, function () {
@@ -9,7 +10,7 @@ module.exports = function() {
     });
 
     this.When(/^I send it to the cucumber upload endpoint$/, function () {
-        const p = this.uploadTo(`upload/cucumber?assessmentKey=${this.assessmentKey}`, this.fileContents);
+        const p = this.uploadTo(`upload/cucumber?assessmentKey=${this.assessmentKey}`, this.filePath);
         return p.then(response => {
             this.response = response;
             return response;
