@@ -1,10 +1,12 @@
 'use strict';
 const 
+    _ = require('lodash'),
     Emitter = require('../utils/emitter'),
     emitter = new Emitter(),
     fs = require('fs'),
     Joi = require('joi'),
-    Promise = require('bluebird');
+    Promise = require('bluebird'),
+    uuid = require('uuid');
 
 function streamToString(stream, cb) {
     return new Promise(function(resolve, reject){
@@ -114,18 +116,65 @@ module.exports = function (server) {
             });
     }
 
-    function handleComponent(element, subject) {
+    function mapNullable(col, f) { return col? _.map(col, f) : undefined };
+
+    function mapStep(d) {
+        return {
+            key: d.line,
+            description: d.keyword + d.name,
+            type: "step",
+            duration: d.result.duration,
+            status: d.result.status,
+        };
+    };
+
+    const statusValues = {
+        "failed": 0,
+        "pending": 1,
+        "passed": 2
+    };
+
+    function reduceStatus(col) { return _.minBy(_.map(col, 'status'), (s) => statusValues[s]); } 
+    function reduceDuration(col) { return _.sumBy(col, 'duration'); }
+
+    function mapScenario(d) {
+        var steps = mapNullable(d.steps, mapStep);
+        return {
+            key: d.id,
+            description: d.description,
+            type: "scenario",
+            innerChecks: steps,
+            status: reduceStatus(steps),
+            duration: reduceDuration(steps),
+        };
+    };
+
+    function mapCheckAttributes(d) {
+        var scenarios = mapNullable(d.elements, mapScenario);
+        return {
+            id: uuid.v4(),
+            key: d.id,
+            description: d.description,
+            type: "feature",
+            innerChecks: scenarios,
+            status: reduceStatus(scenarios),
+            duration: reduceDuration(scenarios),
+        };
+    };
+
+    function mapCheck(entry, subject) {
+        return {
+            type: 'checks',
+            attributes: mapCheckAttributes(entry),
+            relationships: { subject: {data: {id: subject._doc._id } } },
+        };
+    };
+
+    function handleCheck(element, subject) {
+        var checkPayload = mapCheck(element, subject); 
         return idempotentSave(
-            {
-                attributes: {
-                    key: element.id,
-                    name: element.name,
-                    type: 'feature',
-                    description: element.description,                    
-                },
-                relationships: { subject: { data: { id: subject._id, type: 'subjects' } } }
-            },
-            'components',
+            checkPayload,
+            'checks',
             {
                 'attributes.key': element.id,
                 'relationships.subject.data.id': subject._id 
@@ -133,16 +182,16 @@ module.exports = function (server) {
         );        
     }
 
-    function handleComponents(report, subject) {
+    function handleChecks(report, subject) {
         return Promise.map(report.report,
-            (e) => handleComponent(e, subject));
+            (e) => handleCheck(e, subject));
     }
 
     emitter.listen('uploads/cucumber', report => {
         var subjectP = handleSubject(report);
         var assessmentP = subjectP.then(s => handleAssessment(report, s));
         var examP = assessmentP.then(a => handleExam(report, a));
-        var componentsP = subjectP.then(s => handleComponents(report, s));
+        var checksP = subjectP.then(s => handleChecks(report, s));
     });
 
     server.route({

@@ -39,7 +39,8 @@ module.exports = function() {
                 expect(r.data, `${c}.data`).to.have.length.above(0);
                 return r;
             }),
-            checkComponent = (c,k,s) => {
+            // todo: yeah, I know
+            checkCheck = (c,k,s) => {
                 return quickCheck(c, k)
                 .then(res => {
                     const r = _.filter(res.data, i => i.relationships.subject.data.id == s.data[0].id); 
@@ -54,9 +55,8 @@ module.exports = function() {
             subjectP,
             quickCheck('assessments', this.assessmentKey),
             quickCheck('exams', this.examKey),
-            subjectP.then(s => checkComponent('components', 'API-endpoints', s)),
-            subjectP.then(s => checkComponent('components', 'health-check', s)),
-            //checkComponent('components', 'health-check'),
+            subjectP.then(s => checkComponent('checks', 'API-endpoints', s)),
+            subjectP.then(s => checkComponent('checks', 'health-check', s)),
         ])
         .then((result) => {
             callback(null, 'pending');
