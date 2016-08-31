@@ -1,6 +1,7 @@
 'use strict';
 
 const 
+    Emitter = require('./utils/emitter'),
     Hapi = require('hapi'),
     harvester = require('hapi-harvester'),
     Promise = require('bluebird'),
@@ -9,8 +10,11 @@ const
     _ = require('lodash');
 
 module.exports = function (config) {
-    const adapter = harvester.getAdapter('mongodb')
-    const server = new Hapi.Server()
+    const 
+        adapter = harvester.getAdapter('mongodb'),
+        server = new Hapi.Server(),
+        emitter = new Emitter(server);
+
     server.connection({port: config.port})
     
     return new Promise((resolve) => {
@@ -22,11 +26,15 @@ module.exports = function (config) {
             } 
         }], () => {
             _.each(require_dir(module, './routes'), route => {
-                route(server);
+                route(server, emitter);
             })
             
             _.each(require_dir(module, './models'), model => {
-                model(server);
+                model(server, emitter);
+            })
+
+            _.each(require_dir(module, './eventHandlers'), handler => {
+                handler(server, emitter);
             })
 
             server.start(function() {
