@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "./node_modules/.bin/istanbul cover ./node_modules/.bin/cucumber.js"
+    "testonly": "./node_modules/.bin/istanbul cover ./node_modules/.bin/cucumber.js",
+    "test": "npm start && npm run testonly"
   },
   "repository": {
     "type": "git",
@@ -25,18 +26,25 @@
   "homepage": "https://github.com/agco/hapi-harvester-boilerplate#readme",
   "dependencies": {
     "bluebird": "^3.4.0",
+    "bunyan": "^1.8.1",
     "hapi": "^11.1.2",
     "hapi-harvester": "^0.5.1",
     "hapi-swagger": "^2.2.4",
+    "immutable": "^3.8.1",
     "inert": "^3.2.0",
     "joi": "^7.0.1",
     "lodash": "^4.11.1",
     "mongoose": "^4.4.19",
+    "node-libcurl": "^1.0.0",
     "node-uuid": "^1.4.7",
+    "ramda": "^0.22.1",
+    "request": "^2.74.0",
     "require-directory": "^2.1.1",
     "rx": "^4.1.0",
     "susie": "^2.0.0",
-    "vision": "^4.1.0"
+    "uuid": "^2.0.2",
+    "vision": "^4.1.0",
+    "xml2js": "^0.4.17"
   },
   "devDependencies": {
     "chai": "^3.5.0",

@@ -1,22 +1,43 @@
 function World() {
-	const cfg = require('../../app/config');
-    this.server = require('../../app/api')(cfg);
-	
-	var should = require('chai').should();
+	const 
+        cfg = require('../../app/config'),
+        fs = require('fs'),
+        request = require('request'),
+        should = require('chai').should();
     
 	this.doHttpRequest = function (endpoint, verb, payload) {
-		return this.server.then(function (s) {
-			const 
-				$http = require('http-as-promised')
-				headers = {},
-				url = s.info.uri + "/" + endpoint;
-			
-			return $http[verb.toLowerCase()](url, {
-				json: payload,
-				headers: headers
-			});
-		})
+        const 
+            $http = require('http-as-promised')
+            headers = {},
+            // fixme: remove hardcoded port, at least
+            url = `http://localhost:2426/${endpoint}`;
+        
+        return $http[verb.toLowerCase()](url, {
+            json: payload,
+            headers: headers
+        });
 	};
+
+    this.getByKey = function(resourceName, key) {
+        return this.doHttpRequest(`${resourceName}?filter[key]=${key}`, 'GET')
+        .spread(response => response);
+    }
+
+    this.uploadTo = function(endpoint, filePath) {
+        const 
+            fp = require('path').resolve(__dirname, filePath),
+            formData = { cucumber: fs.createReadStream(fp) };
+        return new Promise(function(resolve, reject) {
+            request({
+                method: 'POST',
+                url: `http://localhost:2426/${endpoint}`, 
+                formData: formData
+            }, function(err, httpResponse, body){
+                if (err) return reject(err);
+                return resolve(httpResponse);            
+            });
+        });
+    };
 }
 
 module.exports = function() {
