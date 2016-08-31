@@ -3,7 +3,8 @@ const
     Emitter = require('../utils/emitter'),
     emitter = new Emitter(),
     fs = require('fs'),
-    Joi = require('joi');
+    Joi = require('joi'),
+    Promise = require('bluebird');
 
 function streamToString(stream, cb) {
     return new Promise(function(resolve, reject){
@@ -36,33 +37,6 @@ function validateObject(object, schema) {
         });
     })
 }
-
-function mapCucumberReport(object, assessmentKey, subjectKey, examKey) {
-    return {
-        assessment: {
-            key: assessmentKey
-        },
-        subject: {
-            key: subjectKey
-        },
-        exam: {
-            key: examKey
-        }
-    };
-}
-
-
-/*
-function saveReportResources(resources) {
-    const
-        adapter = server.plugins['hapi-harvester'].adapter,
-        assessmentModel = adapter.models.assessments;
-    return new assessmentModel(resources.assessment).save()
-    .then(m => {
-        return reply().code(202);
-    });
-}
-*/
 
 const cucumberSchema = Joi.array().items(Joi.object().keys({
     id: Joi.string().required(),
@@ -118,9 +92,7 @@ module.exports = function (server) {
         return idempotentSave(
             { 
                 attributes: { key: report.assessmentKey },
-                relationships: {
-                    subject: { data: { id: subject._id, type: 'subjects' } }
-                }
+                relationships: { subject: { data: { id: subject._id, type: 'subjects' } } }
             }, 
             'assessments', 
             { 
@@ -133,9 +105,7 @@ module.exports = function (server) {
         return idempotentSave(
             { 
                 attributes: { key: report.examKey },
-                relationships: {
-                    assessment: { data: { id: assessment._id, type: 'assessments' } }
-                }
+                relationships: { assessment: { data: { id: assessment._id, type: 'assessments' } } }
             }, 
             'exams', 
             { 
@@ -144,10 +114,35 @@ module.exports = function (server) {
             });
     }
 
+    function handleComponent(element, subject) {
+        return idempotentSave(
+            {
+                attributes: {
+                    key: element.id,
+                    name: element.name,
+                    type: 'feature',
+                    description: element.description,                    
+                },
+                relationships: { subject: { data: { id: subject._id, type: 'subjects' } } }
+            },
+            'components',
+            {
+                'attributes.key': element.id,
+                'relationships.subject.data.id': subject._id 
+            }
+        );        
+    }
+
+    function handleComponents(report, subject) {
+        return Promise.map(report.report,
+            (e) => handleComponent(e, subject));
+    }
+
     emitter.listen('uploads/cucumber', report => {
-        handleSubject(report)
-        .then(s => handleAssessment(report, s))
-        .then(a => handleExam(report, a));
+        var subjectP = handleSubject(report);
+        var assessmentP = subjectP.then(s => handleAssessment(report, s));
+        var examP = assessmentP.then(a => handleExam(report, a));
+        var componentsP = subjectP.then(s => handleComponents(report, s));
     });
 
     server.route({

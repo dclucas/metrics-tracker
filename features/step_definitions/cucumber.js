@@ -1,7 +1,9 @@
 module.exports = function() {
     const 
+        _ = require('lodash'),
         Promise = require('bluebird'),
-        should = require('chai').should(),        
+        should = require('chai').should(),
+        expect = require('chai').expect, 
         uuid = require('uuid');
 
     this.Given(/^a cucumber report file$/, function () {
@@ -30,17 +32,35 @@ module.exports = function() {
     });
 
     this.Then(/^all relevant data gets created$/, function (callback) {
-        const fetch = (c, k) => this.getByKey(c, k).then(r => JSON.parse(r.body));
+        const 
+            fetch = (c, k) => this.getByKey(c, k).then(r => JSON.parse(r.body));
+            quickCheck = (c, k) => fetch(c, k).then(r => {
+                expect(r.data, `${c}.data`).to.be.exist;
+                expect(r.data, `${c}.data`).to.have.length.above(0);
+                return r;
+            }),
+            checkComponent = (c,k,s) => {
+                return quickCheck(c, k)
+                .then(res => {
+                    const r = _.filter(res.data, i => i.relationships.subject.data.id == s.data[0].id); 
+                    expect(r).to.have.length(1);
+                    //todo: check mapping here
+                    console.log(r);
+                });
+            },
+            subjectP = quickCheck('subjects', this.subjectKey);
+
         Promise.all([
-            fetch('subjects', this.subjectKey),
-            fetch('assessments', this.assessmentKey),
-            fetch('exams', this.examKey),
+            subjectP,
+            quickCheck('assessments', this.assessmentKey),
+            quickCheck('exams', this.examKey),
+            subjectP.then(s => checkComponent('components', 'API-endpoints', s)),
+            subjectP.then(s => checkComponent('components', 'health-check', s)),
+            //checkComponent('components', 'health-check'),
         ])
-        .spread((subject, assessment, exam) => {
-            subject.data.should.not.be.undefined;
-            assessment.data.should.not.be.undefined;
-            exam.data.should.not.be.undefined;
+        .then((result) => {
             callback(null, 'pending');
-        });
+        })
+        .catch(callback);
     });
 }
