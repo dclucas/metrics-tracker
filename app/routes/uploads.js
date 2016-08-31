@@ -162,36 +162,36 @@ module.exports = function (server) {
         };
     };
 
-    function mapCheck(entry, subject) {
+    function mapCheck(entry, exam) {
         return {
             type: 'checks',
             attributes: mapCheckAttributes(entry),
-            relationships: { subject: {data: {id: subject._doc._id } } },
+            relationships: { exam: {data: {id: exam._doc._id } } },
         };
     };
 
-    function handleCheck(element, subject) {
-        var checkPayload = mapCheck(element, subject); 
+    function handleCheck(element, exam) {
+        var checkPayload = mapCheck(element, exam); 
         return idempotentSave(
             checkPayload,
             'checks',
             {
                 'attributes.key': element.id,
-                'relationships.subject.data.id': subject._id 
+                'relationships.exam.data.id': exam._id 
             }
         );        
     }
 
-    function handleChecks(report, subject) {
+    function handleChecks(report, exam) {
         return Promise.map(report.report,
-            (e) => handleCheck(e, subject));
+            (e) => handleCheck(e, exam));
     }
 
     emitter.listen('uploads/cucumber', report => {
         var subjectP = handleSubject(report);
         var assessmentP = subjectP.then(s => handleAssessment(report, s));
         var examP = assessmentP.then(a => handleExam(report, a));
-        var checksP = subjectP.then(s => handleChecks(report, s));
+        var checksP = examP.then(e => handleChecks(report, e));
     });
 
     server.route({

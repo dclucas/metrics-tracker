@@ -35,28 +35,30 @@ module.exports = function() {
         const 
             fetch = (c, k) => this.getByKey(c, k).then(r => JSON.parse(r.body));
             quickCheck = (c, k) => fetch(c, k).then(r => {
-                expect(r.data, `${c}.data`).to.be.exist;
-                expect(r.data, `${c}.data`).to.have.length.above(0);
+                expect(r.data, `${c}.data.${k}`).to.exist;
+                expect(r.data, `${c}.data.${k}`).to.have.length.above(0);
                 return r;
             }),
             // todo: yeah, I know
-            checkCheck = (c,k,s) => {
+            checkCheck = (c,k,e) => {
                 return quickCheck(c, k)
                 .then(res => {
-                    const r = _.filter(res.data, i => i.relationships.subject.data.id == s.data[0].id); 
+                    const r = _.filter(res.data, i => _.at(i, 'relationships.exam.data.id') == e.data[0].id); 
                     expect(r).to.have.length(1);
                     //todo: check mapping here
                     console.log(r);
                 });
             },
-            subjectP = quickCheck('subjects', this.subjectKey);
+            subjectP = quickCheck('subjects', this.subjectKey),
+            assessmentP = quickCheck('assessments', this.assessmentKey),
+            examsP = quickCheck('exams', this.examKey);
 
         Promise.all([
             subjectP,
-            quickCheck('assessments', this.assessmentKey),
-            quickCheck('exams', this.examKey),
-            subjectP.then(s => checkComponent('checks', 'API-endpoints', s)),
-            subjectP.then(s => checkComponent('checks', 'health-check', s)),
+            assessmentP,
+            examsP,
+            examsP.then(e => checkCheck('checks', 'API-endpoints', e)),
+            examsP.then(e => checkCheck('checks', 'health-check', e)),
         ])
         .then((result) => {
             callback(null, 'pending');
