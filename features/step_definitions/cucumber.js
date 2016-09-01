@@ -32,8 +32,9 @@ module.exports = function() {
     });
 
     this.Then(/^all relevant data gets created$/, function (callback) {
-        const 
-            fetch = (c, k) => this.getByKey(c, k).then(r => JSON.parse(r.body));
+        const
+            // fixme: this delay is not only hackish -- it's flaxy
+            fetch = (c, k) => Promise.delay(1000).then(()=> this.getByKey(c, k).then(r => JSON.parse(r.body))),
             quickCheck = (c, k) => fetch(c, k).then(r => {
                 expect(r.data, `${c}.data.${k}`).to.exist;
                 expect(r.data, `${c}.data.${k}`).to.have.length.above(0);
@@ -46,7 +47,7 @@ module.exports = function() {
                     const r = _.filter(res.data, i => _.at(i, 'relationships.exam.data.id') == e.data[0].id); 
                     expect(r).to.have.length(1);
                     //todo: check mapping here
-                    console.log(r);
+                    return null;
                 });
             },
             subjectP = quickCheck('subjects', this.subjectKey),
