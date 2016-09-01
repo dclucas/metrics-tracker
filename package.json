@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "testonly": "./node_modules/.bin/istanbul cover ./node_modules/.bin/cucumber.js",
-    "test": "npm start && npm run testonly"
+    "test": "./node_modules/.bin/istanbul cover ./node_modules/.bin/cucumber.js"
   },
   "repository": {
     "type": "git",
