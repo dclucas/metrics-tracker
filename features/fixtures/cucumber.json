@@ -56,7 +56,7 @@
                         "line": 9,
                         "keyword": "And ",
                         "result": {
-                            "status": "passed",
+                            "status": "pending",
                             "duration": 662936
                         },
                         "match": {

@@ -1,3 +1,3 @@
 const bunyan = require('bunyan');
 
-module.exports = bunyan.createLogger({name: "myapp"});
+module.exports = bunyan.createLogger({name: "metrics-tracker"});

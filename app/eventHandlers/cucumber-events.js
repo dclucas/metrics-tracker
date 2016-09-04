@@ -1,8 +1,6 @@
 'use strict';
 const 
     _ = require('lodash'),
-    //Emitter = require('../utils/emitter'),
-    //emitter = new Emitter(),
     fs = require('fs'),
     Joi = require('joi'),
     Promise = require('bluebird'),

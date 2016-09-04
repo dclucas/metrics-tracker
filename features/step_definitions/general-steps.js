@@ -12,7 +12,7 @@ module.exports = function () {
     this.When(/^I do a (\w+) against the \/(.*) endpoint$/, function (verb, endpoint) {
         var that = this;
         return this.doHttpRequest(endpoint, verb, null)
-        .spread(function (response) {
+        .then(function (response) {
             that.response = response;
             return response;
         });
@@ -25,7 +25,7 @@ module.exports = function () {
     this.When(/^I (\w+) it against the \/(.*) endpoint$/, function (verb, endpoint) {
         var that = this;
         return this.doHttpRequest(endpoint, verb, that.fixture.request)
-        .spread(function (response) {
+        .then(function (response) {
             that.response = response;
             return response;
         });

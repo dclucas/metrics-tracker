@@ -92,7 +92,7 @@ module.exports = function (server, emitter) {
             .catch(e => reply(e.message).statusCode(429))
             .then(o => validateObject(o, cucumberSchema))
             .catch(e => reply(e.message).statusCode(429))
-            .then(function(o) {
+            .then(o => {
                 emitter.emit('uploads/cucumber', {
                     assessmentKey: request.query.assessmentKey,
                     examKey: request.query.examKey,

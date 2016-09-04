@@ -22,15 +22,4 @@ Emitter.prototype.listen = function (name, handler) {
     return this.subjects[fnName].subscribe(handler);
 };
 
-Emitter.prototype.dispose = function () {
-    var subjects = this.subjects;
-    for (var prop in subjects) {
-        if (hasOwnProp.call(subjects, prop)) {
-            subjects[prop].dispose();
-        }
-    }
-
-    this.subjects = {};
-};
-
 module.exports = Emitter;
