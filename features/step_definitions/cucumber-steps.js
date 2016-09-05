@@ -10,7 +10,6 @@ module.exports = function() {
     chai.use(chaiSubset);
 
     this.Given(/^a cucumber report file$/, function () {
-        //this.fileContents = require('../fixtures/cucumber.json');
         this.filePath = '../fixtures/cucumber.json';
     });
 
@@ -73,4 +72,37 @@ module.exports = function() {
             checksP.then(check => checkChecks(['API-endpoints', 'health-check'], check))
         ]);
     });
+
+    this.Given(/^an existing set of assessment, exam and subject keys$/, function (callback) {
+        // Write code here that turns the phrase above into concrete actions
+        callback(null, 'pending');
+    });
+
+
+    this.Then(/^the existing data is not touched$/, function (callback) {
+        // Write code here that turns the phrase above into concrete actions
+        callback(null, 'pending');
+    });
+
+    this.Given(/^an invalid cucumber report file$/, function () {
+        this.filePath = '../fixtures/cucumber-invalid.json';
+    });
+
+    this.Then(/^I receive an error status code$/, function () {
+        expect(this.response.statusCode).to.be.within(400, 499);
+    });
+
+    this.Then(/^the response message contains details on the failed validation$/, function () {
+        expect(JSON.stringify(this.response.body)).to.match(/\bid\b.*\brequired/);
+    });
+
+    this.Given(/^I am missing either an assessment and\/or exam and\/or subject keys$/, function (callback) {
+        // Write code here that turns the phrase above into concrete actions
+        callback(null, 'pending');
+    });
+
+    this.Then(/^the response message contains details on the missing arguments$/, function (callback) {
+        // Write code here that turns the phrase above into concrete actions
+        callback(null, 'pending');
+    });    
 }

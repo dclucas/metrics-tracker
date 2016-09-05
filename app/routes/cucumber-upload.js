@@ -88,10 +88,7 @@ module.exports = function (server, emitter) {
         },
         handler: function(request, reply) {
             return getObject(request)
-            //fixme: change status code to something more significant
-            .catch(e => reply(e.message).statusCode(429))
             .then(o => validateObject(o, cucumberSchema))
-            .catch(e => reply(e.message).statusCode(429))
             .then(o => {
                 emitter.emit('uploads/cucumber', {
                     assessmentKey: request.query.assessmentKey,
@@ -100,6 +97,12 @@ module.exports = function (server, emitter) {
                     report: o
                 });
                 return reply().code(202);
+            })
+            // fixme: this will resolve even internal errors as 429's
+            // break the initial processing (which returns 429 codes)
+            // from the final one (which returns 5xx codes)
+            .catch(e => {
+                return reply(e.message).code(400);
             });
         }
     });

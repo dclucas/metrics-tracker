@@ -34,6 +34,8 @@ function World() {
 	};
 
     this.getByKey = function(resourceName, key) {
+        // todo: add traces here for easier troubleshooting
+        // todo: consider turning this into the main HTTP helper
         return this.server.then(() =>
             new Promise((resolve, reject) => {
                 request({
