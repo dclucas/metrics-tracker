@@ -24,9 +24,14 @@ Scenario: invalid report
     Then I receive an error status code
     And the response message contains details on the failed validation
 
-Scenario: missing querystring arguments
+Scenario Outline: missing querystring arguments
     Given a cucumber report file
-    And I am missing either an assessment and/or exam and/or subject keys
+    And I am missing a(n) <resource> key
     When I send it to the cucumber upload endpoint
     Then I receive an error status code
     And the response message contains details on the missing arguments
+Examples:
+    |  resource  |
+    | assessment |
+    | exam       |
+    | subject    |

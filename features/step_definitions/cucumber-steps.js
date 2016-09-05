@@ -9,21 +9,26 @@ module.exports = function() {
 
     chai.use(chaiSubset);
 
+    generateKeys = function(target) {
+        target.subjectKey = "test-subject-" + uuid.v4();
+        target.assessmentKey = "test-assessment-" + uuid.v4();
+        target.examKey = "test-exam-" + uuid.v4();
+    }
+
     this.Given(/^a cucumber report file$/, function () {
         this.filePath = '../fixtures/cucumber.json';
     });
 
     this.Given(/^new assessment, exam and subject keys$/, function () {
-        this.subjectKey = "test-subject-" + uuid.v4();
-        this.assessmentKey = "test-assessment-" + uuid.v4();
-        this.examKey = "test-exam-" + uuid.v4();
+        generateKeys(this);
     });
 
     this.When(/^I send it to the cucumber upload endpoint$/, function () {
         const p = this.uploadTo(
-            `upload/cucumber?assessmentKey=${this.assessmentKey}&examKey=${this.examKey}&subjectKey=${this.subjectKey}`, 
+            `upload/cucumber?assessmentKey=${this.assessmentKey || ''}&examKey=${this.examKey || ''}&subjectKey=${this.subjectKey || ''}`, 
             this.filePath);
-        return p.then(response => {
+        return p
+        .then(response => {
             this.response = response;
             return response;
         });
@@ -96,13 +101,14 @@ module.exports = function() {
         expect(JSON.stringify(this.response.body)).to.match(/\bid\b.*\brequired/);
     });
 
-    this.Given(/^I am missing either an assessment and\/or exam and\/or subject keys$/, function (callback) {
-        // Write code here that turns the phrase above into concrete actions
-        callback(null, 'pending');
+    this.Given(/^I am missing a\(n\) (.*) key$/, function (resource) {
+        generateKeys(this);
+        this.missingKey = `${resource}Key`;
+        //this[this.missingKey] = undefined;
+        delete this[this.missingKey];
     });
 
-    this.Then(/^the response message contains details on the missing arguments$/, function (callback) {
-        // Write code here that turns the phrase above into concrete actions
-        callback(null, 'pending');
+    this.Then(/^the response message contains details on the missing arguments$/, function () {
+        expect(this.response.body).to.contain(this.missingKey);
     });    
 }

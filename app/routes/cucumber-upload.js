@@ -80,9 +80,9 @@ module.exports = function (server, emitter) {
             },
             validate: {
                 query: {
-                    assessmentKey: Joi.string().required(),
-                    subjectKey: Joi.string().required(),
-                    examKey: Joi.string().required()
+                    assessmentKey: Joi.string().min(1).required(),
+                    subjectKey: Joi.string().min(1).required(),
+                    examKey: Joi.string().min(1).required()
                 }
             }
         },
