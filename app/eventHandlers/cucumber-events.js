@@ -19,17 +19,19 @@ module.exports = function (server, emitter) {
                 // fixme: handle concurrent saves (multiple parallel calls might cause saves to be fired multiple times)
                 return new model(payload).save();
             }
-            return doc._doc;
+            return doc;
         })
     }
 
+    // todo: refactor the 3 functions below for a bit more DRYness
     function handleSubject(report) {
-        return idempotentSave({ attributes: { key: report.subjectKey }}, 'subjects');
+        return idempotentSave({ type: "subjects", attributes: { key: report.subjectKey }}, 'subjects');
     }
 
     function handleAssessment(report, subject) {
         return idempotentSave(
             { 
+                type: "assessments",
                 attributes: { key: report.assessmentKey },
                 relationships: { subject: { data: { id: subject._id, type: 'subjects' } } }
             }, 
@@ -42,7 +44,8 @@ module.exports = function (server, emitter) {
 
     function handleExam(report, assessment) {
         return idempotentSave(
-            { 
+            {
+                type: "exams",
                 attributes: { key: report.examKey },
                 relationships: { assessment: { data: { id: assessment._id, type: 'assessments' } } }
             }, 

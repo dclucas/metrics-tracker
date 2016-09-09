@@ -5,12 +5,14 @@ const
     should = require('chai').should(),
     $http = require('http-as-promised'),
     server = require('../../app/api')(cfg),
+    adapter = server.then(s => require('../../app/utils/db-adapter')(s)),
     baseUrl = 'http://localhost:2426/',
     log = require('../../app/utils/logger'),
     Promise = require('bluebird');
 
 function World() {
     this.server = server;
+    this.adapter = adapter;
 
 	this.doHttpRequest = function (endpoint, verb, payload) {
         const 
@@ -68,12 +70,10 @@ function World() {
         );
     };
 
-    this.upsertEntry = function(entry) {
-        
-    }
-
-    this.upsertData = function(data) {
-        return Promise.map(data => upsertEntry)
+    this.upsertResource = function(resource) {
+        return adapter.then((a) => {
+            a.upsert(resource)
+        });
     }
 }
 

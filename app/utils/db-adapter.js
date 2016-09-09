@@ -18,10 +18,16 @@ module.exports = function (server) {
         })
     }
 
-    adapter.upsert = (payload) => 
-        adapter.models[payload.data.type].findByIdAndUpdate(
-            payload.data.id,
+    const upsert = (payload) => {
+        return adapter.models[payload.type].findByIdAndUpdate(
+            payload.id,
             payload,
             { upsert: true }
         );
+    }
+
+    adapter.upsert = upsert;
+
+    
+    return adapter;
 }

@@ -2,11 +2,6 @@
     "checks": [
         {
             "type" : "checks",
-            "relationships" : {
-                "exam" : {
-                    "data" : {}
-                }
-            },
             "attributes" : {
                 "key" : "API-endpoints",
                 "description" : "  As an API client\n  I want to perform basic CRUD operations",
@@ -56,12 +51,6 @@
         },
         {
             "type" : "checks",
-            "relationships" : {
-                "exam" : {
-                    "data" : {
-                    }
-                }
-            },
             "attributes" : {
                 "key" : "health-check",
                 "description" : "  As an API client\n  I want to know when the app is running fine",

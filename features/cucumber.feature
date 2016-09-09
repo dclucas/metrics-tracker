@@ -7,15 +7,26 @@ Scenario: report upload
     And new assessment, exam and subject keys
     When I send it to the cucumber upload endpoint
     Then I receive a success response
-    And all relevant data gets created
+    And the following data gets created:
+    |  resource kind |
+    | subjects       |
+    | assessments    |
+    | exams          |
+    | checks         |
 
 Scenario: report upload -- idempotent upload
     Given a cucumber report file
     And an existing set of assessment, exam and subject keys
     When I send it to the cucumber upload endpoint
     Then I receive a success response
-    And all relevant data gets created
-    And the existing data is not touched
+    And the following data gets created:
+    |  resource kind |
+    | checks         |
+    And the following data is not touched:
+    |  resource kind |
+    | subjects       |
+    | assessments    |
+    | exams          |
 
 Scenario: invalid report
     Given an invalid cucumber report file
