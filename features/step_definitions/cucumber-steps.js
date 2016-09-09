@@ -183,8 +183,12 @@ module.exports = function() {
                         })
                     })
                 .then(checks => {
-                    expect(checks).to.containSubset(this.expected.checks);
-                    return checks;
+                    return Promise.map(this.expected.checks, e => {
+                        const a = _.find(checks, c => c.attributes.key == e.attributes.key);
+                        expect(a).to.exist;
+                        expect(a).to.containSubset(_.omit(e, ['relationships', '_id']));
+                        return e;
+                    });
                 });
             })
         }
@@ -192,33 +196,7 @@ module.exports = function() {
             return coreP;
         }
     });
-    /*
-else {
-                    // API-endpoints
-                    keys = this.keys[resourceName];
-                    expected = this.expected[resourceName];
-                    return Promise
-                    .map(keys, k => this.getByKey(resourceName, k).then(x => JSON.parse(x.body)))
-                    .then(bodies => {
-                        const b = _.flatMap(bodies, b => _.filter(b.data, i => _.at(i, 'relationships.exam.data.id') == check.data[0].id))
-                        expect(bodies.data[0], `${resourceName}.data.${key}`).to.containSubset(expected);
-                        return resourceName;
-                    });                    
-                }    
-     */
-/*
-        return Promise.all(_.map(keys, k => fetch('checks', k)))   
-        .then(res => {
-            const r = _.filter(
-                _.flatMap(res, x => x.data), 
-                i => _.at(i, 'relationships.exam.data.id') == check.data[0].id
-            ); 
-            expect(r).to.have.length(2);
-            checkExpectedArray(r, 'checks');
-            return null;
-        });
 
- */
     this.Then(/^the following data is not touched:$/, function (table, callback) {
         // Write code here that turns the phrase above into concrete actions
         callback(null, 'pending');
