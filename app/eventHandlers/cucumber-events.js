@@ -1,10 +1,13 @@
 'use strict';
-const 
-    _ = require('lodash'),
-    fs = require('fs'),
-    Joi = require('joi'),
-    Promise = require('bluebird'),
-    uuid = require('uuid');
+const _ = require('lodash');
+const fs = require('fs');
+const Joi = require('joi');
+const Promise = require('bluebird');
+const uuid = require('uuid');
+const logger = require('../utils/logger');
+const R = require('ramda');
+const cfg = require('../config');
+const influx = require('influx')(cfg.influxUrl);
 
 module.exports = function (server, emitter) {
     function idempotentSave(payload, collection, filter) {
@@ -133,4 +136,42 @@ module.exports = function (server, emitter) {
         var examP = assessmentP.then(a => handleExam(report, a));
         var checksP = examP.then(e => handleChecks(report, e));
     });
+
+    function cucumberToInflux(reportHeader, reportRow) {
+        console.log(reportRow);
+        return reportRow;
+    }
+
+    emitter.listen('uploads/cucumber', report => {
+        logger.trace(`handling cucumber upload event at influx processor`);
+        const timestamp = new Date();
+        const influxLines = 
+            R.chain(feature => 
+                R.chain(scenario =>
+                    R.chain(step => {
+                        return {
+                            subject: report.subjectKey,
+                            //evaluation: '',
+                            //evaluationTag: '',
+                            feature: feature.name,
+                            scenario: scenario.name,
+                            step: step.name,
+                            line: step.line,
+                            status: step.result.status,
+                            duration: step.result.duration || null,
+                            time: timestamp
+                        } 
+                    },
+                    scenario.steps),
+                feature.elements),
+            report.report);
+
+        R.forEach(l => 
+            influx.writePoint(
+                'cucumber', 
+                R.pick(['status', 'duration', 'time'], l), 
+                R.omit(['status', 'duration', 'time'], l),
+                err => err? logger.error(err) : null), 
+            influxLines);
+    });     
 }

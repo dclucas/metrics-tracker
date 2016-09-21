@@ -4,4 +4,6 @@ config.connectionString = process.env.MONGODB_URL || process.env.MONGOLAB_URI ||
 config.oplogConnectionString = process.env.MONGODB_OPLOG_URL || 'mongodb://127.0.0.1:27017/local';
 config.port = process.env.PORT || 2426;
 config.baseUri = process.env.BASE_URI || 'http://localhost:' + config.port;
+config.logLevel = process.env.LOG_LEVEL || 'info';
+config.influxUrl = process.env.INFLUX_URL || 'http://localhost:8086/metricsdb';
 module.exports = config;
