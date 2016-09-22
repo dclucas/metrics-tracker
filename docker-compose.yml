@@ -7,10 +7,3 @@ services:
     ports:
       - "8083:8083"
       - "8086:8086"
-  db:
-    image: mongo:3
-    entrypoint: [ "mongod", "--smallfiles", "--rest" ]
-    expose:
-      - "27017"
-    ports:
-      - "27017:27017"
