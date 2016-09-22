@@ -7,6 +7,8 @@ module.exports = function() {
         expected = require('../fixtures/cucumber-api-resources.json'),
         chaiSubset = require('chai-subset'),
         uuid = require('uuid'),
+        cfg = require('../../app/config'),
+        influx = require('influx')(cfg.influxUrl),
         delay = Promise.delay(1000),
         that = this;
 
@@ -51,7 +53,7 @@ module.exports = function() {
     });
 
     this.Then(/^I receive a success response$/, function () {
-        // no action
+        expect(this.response.statusCode).to.be.within(200,299);
     });
 
     this.fetch = (collection, key) => {
@@ -197,8 +199,32 @@ module.exports = function() {
         }
     });
 
-    this.Then(/^the following data is not touched:$/, function (table, callback) {
-        // Write code here that turns the phrase above into concrete actions
-        callback(null, 'pending');
+    this.Given(/^an evaluation, evaluation tag and subject keys$/, function () {
+        this.evaluationTag = `tag-${uuid.v4()}`;
+        this.queryString = `subject=test-subject-${uuid.v4()}&evaluation=test-eval-${uuid.v4()}&evaluationTag=${this.evaluationTag}`;
+    });
+
+    this.When(/^I do a curl POST against the cucumber upload endpoint$/, function () {
+        const uri = `upload/cucumber?${this.queryString}`;
+        const p = this.uploadTo(
+            uri, 
+            this.filePath);
+        return p
+        .then(response => {
+            this.response = response;
+            return response;
+        });
+    });
+
+    this.Then(/^the corresponding metrics get created$/, function (callback) {
+        influx.query(`SELECT * FROM cucumber WHERE evaluationTag='${this.evaluationTag}'`,
+            (err, results) => {
+                if (err) {
+                    callback(err);
+                } else {
+                    expect(results).not.to.be.empty;
+                    callback(null, 'pending');
+                }
+            });
     });    
 }

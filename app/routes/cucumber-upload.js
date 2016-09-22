@@ -80,9 +80,12 @@ module.exports = function (server, emitter) {
             },
             validate: {
                 query: {
-                    assessmentKey: Joi.string().min(1).required(),
-                    subjectKey: Joi.string().min(1).required(),
-                    examKey: Joi.string().min(1).required()
+                    assessmentKey: Joi.string().min(1),
+                    subjectKey: Joi.string().min(1),
+                    examKey: Joi.string().min(1),
+                    evaluation: Joi.string().min(1),
+                    evaluationTag: Joi.string().min(1),
+                    subject: Joi.string().min(1)
                 }
             }
         },
@@ -94,6 +97,10 @@ module.exports = function (server, emitter) {
                     assessmentKey: request.query.assessmentKey,
                     examKey: request.query.examKey,
                     subjectKey: request.query.subjectKey,
+                    //todo: convert this into a `pick` command
+                    subject: request.query.subject,
+                    evaluation: request.query.evaluation,
+                    evaluationTag: request.query.evaluationTag,
                     report: o
                 });
                 return reply().code(202);

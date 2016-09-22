@@ -150,9 +150,9 @@ module.exports = function (server, emitter) {
                 R.chain(scenario =>
                     R.chain(step => {
                         return {
-                            subject: report.subjectKey,
-                            //evaluation: '',
-                            //evaluationTag: '',
+                            subject: report.subject,
+                            evaluation: report.evaluation,
+                            evaluationTag: report.evaluationTag,
                             feature: feature.name,
                             scenario: scenario.name,
                             step: step.name,
