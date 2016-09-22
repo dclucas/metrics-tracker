@@ -33,10 +33,12 @@ function World() {
         );
 	};
 
-    this.uploadTo = function(endpoint, filePath) {
+    this.uploadTo = function(endpoint, filePath, dataKey) {
         const 
-            fp = require('path').resolve(__dirname, filePath),
-            formData = { cucumber: fs.createReadStream(fp) };
+            fp = require('path').resolve(__dirname, filePath);
+        //todo: refactor the 2 lines below
+        var formData = {};
+        formData[dataKey] = fs.createReadStream(fp);
         return this.server.then(() =>
             new Promise(function(resolve, reject) {
                 request({

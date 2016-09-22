@@ -1,25 +1,25 @@
-Feature: Cucumber reports
+Feature: lcov reports
     As an API client
-    I want to upload cucumber reports
+    I want to upload lcov reports
     
-Scenario: cucumber report upload
-    Given a cucumber.json report file
+Scenario: lcov report upload
+    Given a lcov.info report file
     And an evaluation, evaluation tag and subject keys
-    When I do a curl POST against the cucumber upload endpoint
+    When I do a curl POST against the lcov upload endpoint
     Then I receive a success response
     And the corresponding metrics get created
 
 Scenario: invalid report
-    Given an invalid cucumber.json report file
+    Given an invalid lcov.info report file
     And an evaluation, evaluation tag and subject keys
-    When I do a curl POST against the cucumber upload endpoint
+    When I do a curl POST against the lcov upload endpoint
     Then I receive an error status code
     And the response message contains details on the failed validation
 
 Scenario Outline: missing querystring arguments
-    Given a cucumber.json report file
+    Given a lcov.info report file
     And I am missing a(n) <param> parameter
-    When I do a curl POST against the cucumber upload endpoint
+    When I do a curl POST against the lcov upload endpoint
     Then I receive an error status code
     And the response message contains details on the missing arguments
 Examples:

@@ -17,61 +17,20 @@ function streamToString(stream, cb) {
         });
     });
 }
-
-function getObject(request) {
+//todo: refactor these methods into util functions
+function getString(request) {
     const data = request.payload;
-    if (data.cucumber) {
-        return streamToString(data.cucumber)
-        .then(function(str) {
-            return JSON.parse(str);
-        });
+    if (data.lcov) {
+        return streamToString(data.lcov)
     }
     //todo: reject this with a clear message (and validate it through a test)
     return Promise.reject();
 }
 
-function validateObject(object, schema) {
-    return new Promise(function(resolve, reject) {
-        Joi.validate(object, schema, function (err, value) {
-            if (err) reject(err);
-            resolve(object);
-        });
-    })
-}
-
-const cucumberSchema = Joi.array().items(Joi.object().keys({
-    id: Joi.string().required(),
-    name: Joi.string().required(),
-    description: Joi.string(),
-    line: Joi.number().integer(),
-    keyword: Joi.string(),
-    uri: Joi.string(),
-    elements: Joi.array().items(Joi.object().keys({
-        name: Joi.string().required(),
-        id: Joi.string().required(),
-        line: Joi.number().integer(),
-        keyword: Joi.string(),
-        description: Joi.string(),
-        type: Joi.string().required(),
-        steps: Joi.array().items(Joi.object().keys({
-            name: Joi.string(),
-            line: Joi.number().integer(),
-            keyword: Joi.string(),
-            result: Joi.object().keys({
-                status: Joi.string(),
-                duration: Joi.number().integer()
-            }),
-            match: Joi.object().keys({
-                location: Joi.string()
-            })
-        }))
-    }))
-}));
-
 module.exports = function (server, emitter) {
     server.route({
         method: 'POST',
-        path: '/upload/cucumber',
+        path: '/upload/lcov',
         config: {
             tags: ['upload'],
             payload: {
@@ -88,10 +47,16 @@ module.exports = function (server, emitter) {
             }
         },
         handler: function(request, reply) {
+            return getString(request)
+            .then(s => {
+                console.log(s);
+                return reply().code(202);
+            })
+            /*
             return getObject(request)
-            .then(o => validateObject(o, cucumberSchema))
+            .then(o => validateObject(o, lcovSchema))
             .then(o => {
-                emitter.emit('uploads/cucumber', {
+                emitter.emit('uploads/lcov', {
                     assessmentKey: request.query.assessmentKey,
                     examKey: request.query.examKey,
                     subjectKey: request.query.subjectKey,
@@ -109,6 +74,7 @@ module.exports = function (server, emitter) {
             .catch(e => {
                 return reply(e.message).code(400);
             });
+            */
         }
     });
 }
