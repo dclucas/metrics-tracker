@@ -4,7 +4,6 @@ module.exports = function() {
         Promise = require('bluebird'),
         chai = require('chai'),
         expect = chai.expect,
-        expected = require('../fixtures/cucumber-api-resources.json'),
         expectedMetrics = require('../fixtures/cucumber-influx-metrics.json'),
         chaiSubset = require('chai-subset'),
         uuid = require('uuid'),

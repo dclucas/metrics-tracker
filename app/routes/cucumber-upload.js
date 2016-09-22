@@ -26,6 +26,7 @@ function getObject(request) {
             return JSON.parse(str);
         });
     }
+    //todo: reject this with a clear message (and validate it through a test)
     return Promise.reject();
 }
 
