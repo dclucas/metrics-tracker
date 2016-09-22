@@ -83,9 +83,9 @@ module.exports = function (server, emitter) {
                     assessmentKey: Joi.string().min(1),
                     subjectKey: Joi.string().min(1),
                     examKey: Joi.string().min(1),
-                    evaluation: Joi.string().min(1),
-                    evaluationTag: Joi.string().min(1),
-                    subject: Joi.string().min(1)
+                    evaluation: Joi.string().min(1).required(),
+                    evaluationTag: Joi.string().min(1).required(),
+                    subject: Joi.string().min(1).required()
                 }
             }
         },
