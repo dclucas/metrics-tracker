@@ -27,14 +27,12 @@
     "bluebird": "^3.4.0",
     "bunyan": "^1.8.1",
     "hapi": "^11.1.2",
-    "hapi-harvester": "^0.5.1",
     "hapi-swagger": "^2.2.4",
     "immutable": "^3.8.1",
     "inert": "^3.2.0",
+    "influx": "^4.2.2",
     "joi": "^7.0.1",
     "lodash": "^4.11.1",
-    "mongoose": "^4.4.19",
-    "node-libcurl": "^1.0.0",
     "node-uuid": "^1.4.7",
     "ramda": "^0.22.1",
     "request": "^2.74.0",
@@ -49,6 +47,7 @@
     "chai": "^3.5.0",
     "chai-subset": "^1.2.2",
     "cucumber": "^0.10.3",
-    "istanbul": "^0.4.3"
+    "istanbul": "^0.4.3",
+    "node-libcurl": "^1.0.0"
   }
 }

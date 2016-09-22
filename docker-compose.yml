@@ -1,8 +1,9 @@
-db:
-  log_driver: "none"
-  image: mongo:3
-  entrypoint: [ "mongod", "--smallfiles", "--rest" ]
-  expose:
-    - "27017"
-  ports:
-    - "27017:27017"
+version: '2'
+services:
+  influx:
+    image: influxdb:1.0.0-alpine
+    volumes:
+        - /var/lib/influxdb
+    ports:
+      - "8083:8083"
+      - "8086:8086"
