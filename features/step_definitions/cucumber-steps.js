@@ -5,6 +5,7 @@ module.exports = function() {
         chai = require('chai'),
         expect = chai.expect,
         expected = require('../fixtures/cucumber-api-resources.json'),
+        expectedMetrics = require('../fixtures/cucumber-influx-metrics.json'),
         chaiSubset = require('chai-subset'),
         uuid = require('uuid'),
         cfg = require('../../app/config'),
@@ -216,15 +217,21 @@ module.exports = function() {
         });
     });
 
-    this.Then(/^the corresponding metrics get created$/, function (callback) {
-        influx.query(`SELECT * FROM cucumber WHERE evaluationTag='${this.evaluationTag}'`,
-            (err, results) => {
-                if (err) {
-                    callback(err);
-                } else {
-                    expect(results).not.to.be.empty;
-                    callback(null, 'pending');
+    this.Then(/^the corresponding metrics get created$/, function () {
+        return Promise.delay(1000).then(() => new Promise((resolve, reject) =>
+            influx.query(`SELECT * FROM cucumber WHERE evaluationTag='${this.evaluationTag}'`,
+                (err, results) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        expect(results).not.to.be.empty;
+                        const metrics = results[0];
+                        expect(metrics).not.to.be.empty;
+                        expect(metrics).to.containSubset(expectedMetrics);
+                        resolve(true);
+                    }
                 }
-            });
-    });    
+            )
+        ))
+    });
 }

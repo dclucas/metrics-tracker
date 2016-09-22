@@ -156,7 +156,7 @@ module.exports = function (server, emitter) {
                             feature: feature.name,
                             scenario: scenario.name,
                             step: step.name,
-                            line: step.line,
+                            line: Number(step.line),
                             status: step.result.status,
                             duration: step.result.duration || null,
                             time: timestamp
