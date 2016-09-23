@@ -69,29 +69,6 @@ module.exports = function (server, emitter) {
                     }
                 });
             })
-            /*
-            return getObject(request)
-            .then(o => validateObject(o, lcovSchema))
-            .then(o => {
-                emitter.emit('uploads/lcov', {
-                    assessmentKey: request.query.assessmentKey,
-                    examKey: request.query.examKey,
-                    subjectKey: request.query.subjectKey,
-                    //todo: convert this into a `pick` command
-                    subject: request.query.subject,
-                    evaluation: request.query.evaluation,
-                    evaluationTag: request.query.evaluationTag,
-                    report: o
-                });
-                return reply().code(202);
-            })
-            // fixme: this will resolve even internal errors as 429's
-            // break the initial processing (which returns 429 codes)
-            // from the final one (which returns 5xx codes)
-            .catch(e => {
-                return reply(e.message).code(400);
-            });
-            */
         }
     });
 }

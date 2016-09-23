@@ -27,8 +27,9 @@ module.exports = function() {
         expect(this.response.statusCode).to.be.within(200,299);
     });
 
-    this.Given(/^an invalid cucumber\.json report file$/, function () {
-        this.filePath = '../fixtures/cucumber-invalid.json';
+    this.Given(/^an invalid ([\w\.]+) report file$/, function (report) {
+        this.filePath = `../fixtures/invalidReports/${report}`;
+        this.reportKind = report;
     });
 
     this.Then(/^I receive an error status code$/, function () {
@@ -36,7 +37,11 @@ module.exports = function() {
     });
 
     this.Then(/^the response message contains details on the failed validation$/, function () {
-        expect(JSON.stringify(this.response.body)).to.match(/\bid\b.*\brequired/);
+        if (this.reportKind === 'cucumber.json') {
+            expect(JSON.stringify(this.response.body)).to.match(/\bid\b.*\brequired/);
+        } else {
+            expect(JSON.stringify(this.response.body)).to.match(/Failed to parse string/);
+        }
     });
 
     this.Given(/^I am missing a\(n\) (.*) parameter$/, function (param) {
