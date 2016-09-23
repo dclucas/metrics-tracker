@@ -33,7 +33,8 @@ module.exports = function() {
     });
 
     this.Then(/^I receive an error status code$/, function () {
-        expect(this.response.statusCode).to.be.within(400, 499);
+        //expect(this.response.statusCode).to.be.within(400, 499);
+        expect(this.response.statusCode).to.equal(400);
     });
 
     this.Then(/^the response message contains details on the failed validation$/, function () {
