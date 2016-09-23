@@ -1,3 +1,52 @@
 [
-    { "message": "this should fail in the comparison" }
+    {
+        "errorCount": 0,
+        "file": "/Users/lucasd/src/oss/dclucas/metrics-tracker/app/api.js",
+        "warningCount": 0
+    },
+    {
+        "errorCount": 0,
+        "file": "/Users/lucasd/src/oss/dclucas/metrics-tracker/app/utils/requestUtils.js",
+        "warningCount": 0
+    },
+    {
+        "errorCount": 0,
+        "file": "/Users/lucasd/src/oss/dclucas/metrics-tracker/app/utils/logger.js",
+        "warningCount": 0
+    },
+    {
+        "errorCount": 0,
+        "file": "/Users/lucasd/src/oss/dclucas/metrics-tracker/app/utils/emitter.js",
+        "warningCount": 0
+    },
+    {
+        "errorCount": 2,
+        "file": "/Users/lucasd/src/oss/dclucas/metrics-tracker/app/routes/lcov-upload.js",
+        "warningCount": 0
+    },
+    {
+        "errorCount": 2,
+        "file": "/Users/lucasd/src/oss/dclucas/metrics-tracker/app/routes/healhcheck.js",
+        "warningCount": 0
+    },
+    {
+        "errorCount": 2,
+        "file": "/Users/lucasd/src/oss/dclucas/metrics-tracker/app/routes/cucumber-upload.js",
+        "warningCount": 0
+    },
+    {
+        "errorCount": 0,
+        "file": "/Users/lucasd/src/oss/dclucas/metrics-tracker/app/eventHandlers/lcov-events.js",
+        "warningCount": 0
+    },
+    {
+        "errorCount": 0,
+        "file": "/Users/lucasd/src/oss/dclucas/metrics-tracker/app/eventHandlers/cucumber-events.js",
+        "warningCount": 0
+    },
+    {
+        "errorCount": 0,
+        "file": "/Users/lucasd/src/oss/dclucas/metrics-tracker/app/config.js",
+        "warningCount": 0
+    }
 ]

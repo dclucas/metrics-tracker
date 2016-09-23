@@ -4,6 +4,7 @@ const uuid = require('uuid');
 const reqUtils = require('../utils/requestUtils');
 const R = require('ramda');
 
+//fixme: allow unknown fields and just require absolutely mandatory ones
 const cucumberSchema = Joi.array().items(Joi.object().keys({
     id: Joi.string().required(),
     name: Joi.string().required(),

@@ -12,6 +12,7 @@ Scenario Outline: valid report upload
     | report        | endpoint |
     | cucumber.json | cucumber |
     | lcov.info     | lcov     |
+    | eslint.json   | eslint   |
 
 Scenario Outline: invalid report
     Given an invalid <report> report file

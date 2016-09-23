@@ -3,6 +3,7 @@ const Joi = require('joi');
 const reqUtils = require('../utils/requestUtils');
 const R = require('ramda');
 
+//fixme: allow unknown fields and just require absolutely mandatory ones
 const eslintSchema = Joi.array().items(Joi.object().keys({
     filePath: Joi.string().required(),
     errorCount: Joi.number().integer().required(),
