@@ -35,6 +35,7 @@ module.exports = function (server, emitter) {
                     evaluation: Joi.string().min(1).required(),
                     evaluationTag: Joi.string().min(1).required(),
                     subject: Joi.string().min(1).required()
+                    //todo: add (optional) basePath argument
                 }
             }
         },
