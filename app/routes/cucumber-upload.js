@@ -1,43 +1,8 @@
 'use strict';
-const 
-    _ = require('lodash'),
-    fs = require('fs'),
-    Joi = require('joi'),
-    Promise = require('bluebird'),
-    uuid = require('uuid');
-
-function streamToString(stream, cb) {
-    return new Promise(function(resolve, reject){
-        const chunks = [];
-        stream.on('data', (chunk) => {
-            chunks.push(chunk.toString());
-        });
-        stream.on('end', () => {
-            resolve(chunks.join(''));
-        });
-    });
-}
-
-function getObject(request) {
-    const data = request.payload;
-    if (data.cucumber) {
-        return streamToString(data.cucumber)
-        .then(function(str) {
-            return JSON.parse(str);
-        });
-    }
-    //todo: reject this with a clear message (and validate it through a test)
-    return Promise.reject();
-}
-
-function validateObject(object, schema) {
-    return new Promise(function(resolve, reject) {
-        Joi.validate(object, schema, function (err, value) {
-            if (err) reject(err);
-            resolve(object);
-        });
-    })
-}
+const Joi = require('joi');
+const uuid = require('uuid');
+const reqUtils = require('../utils/requestUtils');
+const R = require('ramda');
 
 const cucumberSchema = Joi.array().items(Joi.object().keys({
     id: Joi.string().required(),
@@ -81,9 +46,6 @@ module.exports = function (server, emitter) {
             },
             validate: {
                 query: {
-                    assessmentKey: Joi.string().min(1),
-                    subjectKey: Joi.string().min(1),
-                    examKey: Joi.string().min(1),
                     evaluation: Joi.string().min(1).required(),
                     evaluationTag: Joi.string().min(1).required(),
                     subject: Joi.string().min(1).required()
@@ -91,19 +53,13 @@ module.exports = function (server, emitter) {
             }
         },
         handler: function(request, reply) {
-            return getObject(request)
-            .then(o => validateObject(o, cucumberSchema))
-            .then(o => {
-                emitter.emit('uploads/cucumber', {
-                    assessmentKey: request.query.assessmentKey,
-                    examKey: request.query.examKey,
-                    subjectKey: request.query.subjectKey,
-                    //todo: convert this into a `pick` command
-                    subject: request.query.subject,
-                    evaluation: request.query.evaluation,
-                    evaluationTag: request.query.evaluationTag,
-                    report: o
-                });
+            return reqUtils.getObject(request, 'cucumber')
+            .then(o => reqUtils.validateObject(o, cucumberSchema))
+            .then(report => {
+                emitter.emit(
+                    'uploads/cucumber',
+                    R.assoc('report', report, R.pick(['subject', 'evaluation', 'evaluationTag'], request.query))
+                );
                 return reply().code(202);
             })
             // fixme: this will resolve even internal errors as 429's

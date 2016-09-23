@@ -1,37 +1,48 @@
 module.exports = function() {
-    const 
-        _ = require('lodash'),
-        Promise = require('bluebird'),
-        chai = require('chai'),
-        expect = chai.expect,
-        expectedMetrics = require('../fixtures/cucumber-influx-metrics.json'),
-        chaiSubset = require('chai-subset'),
-        uuid = require('uuid'),
-        cfg = require('../../app/config'),
-        influx = require('influx')(cfg.influxUrl),
-        delay = Promise.delay(1000),
-        that = this;
+
+    const _ = require('lodash');
+    const Promise = require('bluebird');
+    const chai = require('chai');
+    const expect = chai.expect;
+    const chaiSubset = require('chai-subset');
+    const uuid = require('uuid');
+    const cfg = require('../../app/config');
+    const influx = require('influx')(cfg.influxUrl);
+    const delay = Promise.delay(1000);
+    const that = this;
+    const measurements = {
+            'cucumber.json': 'cucumber',
+            'lcov.info': 'coverage'
+        };
 
     chai.use(chaiSubset);
 
-    this.Given(/^a cucumber report file$/, function () {
-        this.filePath = '../fixtures/cucumber.json';
+    this.Given(/^a ([\w\.]+) report file$/, function (report) {
+        this.filePath = `../fixtures/reports/${report}`;
+        this.reportKind = report;
+        this.expectedMeasurements = require(`../fixtures/expectedMeasurements/${measurements[report]}.json`);
     });
 
     this.Then(/^I receive a success response$/, function () {
         expect(this.response.statusCode).to.be.within(200,299);
     });
 
-    this.Given(/^an invalid cucumber report file$/, function () {
-        this.filePath = '../fixtures/cucumber-invalid.json';
+    this.Given(/^an invalid ([\w\.]+) report file$/, function (report) {
+        this.filePath = `../fixtures/invalidReports/${report}`;
+        this.reportKind = report;
     });
 
     this.Then(/^I receive an error status code$/, function () {
-        expect(this.response.statusCode).to.be.within(400, 499);
+        //expect(this.response.statusCode).to.be.within(400, 499);
+        expect(this.response.statusCode).to.equal(400);
     });
 
     this.Then(/^the response message contains details on the failed validation$/, function () {
-        expect(JSON.stringify(this.response.body)).to.match(/\bid\b.*\brequired/);
+        if (this.reportKind === 'cucumber.json') {
+            expect(JSON.stringify(this.response.body)).to.match(/\bid\b.*\brequired/);
+        } else {
+            expect(JSON.stringify(this.response.body)).to.match(/Failed to parse string/);
+        }
     });
 
     this.Given(/^I am missing a\(n\) (.*) parameter$/, function (param) {
@@ -58,11 +69,12 @@ module.exports = function() {
         this.queryString = `subject=test-subject-${uuid.v4()}&evaluation=test-eval-${uuid.v4()}&evaluationTag=${this.evaluationTag}`;
     });
 
-    this.When(/^I do a curl POST against the cucumber upload endpoint$/, function () {
-        const uri = `upload/cucumber?${this.queryString}`;
+    this.When(/^I do a curl POST against the (\w+) upload endpoint$/, function (endpoint) {
+        const uri = `upload/${endpoint}?${this.queryString}`;
         const p = this.uploadTo(
             uri, 
-            this.filePath);
+            this.filePath,
+            endpoint);
         return p
         .then(response => {
             this.response = response;
@@ -71,8 +83,9 @@ module.exports = function() {
     });
 
     this.Then(/^the corresponding metrics get created$/, function () {
-        return Promise.delay(1000).then(() => new Promise((resolve, reject) =>
-            influx.query(`SELECT * FROM cucumber WHERE evaluationTag='${this.evaluationTag}'`,
+        //todo: change this delay for something less flaky (such as watching SSE)
+        return Promise.delay(2000).then(() => new Promise((resolve, reject) =>
+            influx.query(`SELECT * FROM ${measurements[this.reportKind]} WHERE evaluationTag='${this.evaluationTag}'`,
                 (err, results) => {
                     if (err) {
                         reject(err);
@@ -80,7 +93,7 @@ module.exports = function() {
                         expect(results).not.to.be.empty;
                         const metrics = results[0];
                         expect(metrics).not.to.be.empty;
-                        expect(metrics).to.containSubset(expectedMetrics);
+                        expect(metrics).to.containSubset(this.expectedMeasurements);
                         resolve(true);
                     }
                 }

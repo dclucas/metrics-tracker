@@ -1,9 +1,4 @@
 'use strict';
-const _ = require('lodash');
-const fs = require('fs');
-const Joi = require('joi');
-const Promise = require('bluebird');
-const uuid = require('uuid');
 const logger = require('../utils/logger');
 const R = require('ramda');
 const cfg = require('../config');
@@ -11,7 +6,7 @@ const influx = require('influx')(cfg.influxUrl);
 
 module.exports = function (server, emitter) {
     emitter.listen('uploads/cucumber', report => {
-        logger.trace(`handling cucumber upload event at influx processor`);
+        logger.trace('handling cucumber upload event at influx processor');
         const timestamp = new Date();
         const influxLines = 
             R.chain(feature => 
@@ -28,7 +23,7 @@ module.exports = function (server, emitter) {
                             status: step.result.status,
                             duration: step.result.duration,
                             time: timestamp
-                        } 
+                        }; 
                     },
                     scenario.steps),
                 feature.elements),
@@ -42,4 +37,4 @@ module.exports = function (server, emitter) {
                 err => err? logger.error(err) : null), 
             influxLines);
     });     
-}
+};
