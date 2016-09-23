@@ -41,7 +41,7 @@ module.exports = function (server, emitter) {
                         return reply().code(202);                        
                     }
                 });
-            })
+            });
         }
     });
-}
+};

@@ -1,47 +1,32 @@
 'use strict';
 const Joi = require('joi');
-const uuid = require('uuid');
 const reqUtils = require('../utils/requestUtils');
 const R = require('ramda');
 
 //fixme: allow unknown fields and just require absolutely mandatory ones
-const cucumberSchema = Joi.array().items(Joi.object().keys({
-    id: Joi.string().required(),
-    name: Joi.string().required(),
-    description: Joi.string(),
-    line: Joi.number().integer(),
-    keyword: Joi.string(),
-    uri: Joi.string(),
-    elements: Joi.array().items(Joi.object().keys({
-        name: Joi.string().required(),
-        id: Joi.string().required(),
+const eslintSchema = Joi.array().items(Joi.object().keys({
+    filePath: Joi.string().required(),
+    errorCount: Joi.number().integer().required(),
+    warningCount: Joi.number().integer().required(),
+    messages: Joi.array().items(Joi.object().keys({
+        ruleId: Joi.string().required(),
+        severity: Joi.number().integer().required(),
+        message: Joi.string().required(),
         line: Joi.number().integer(),
-        keyword: Joi.string(),
-        description: Joi.string(),
-        type: Joi.string().required(),
-        steps: Joi.array().items(Joi.object().keys({
-            name: Joi.string(),
-            line: Joi.number().integer(),
-            keyword: Joi.string(),
-            result: Joi.object().keys({
-                status: Joi.string(),
-                duration: Joi.number().integer()
-            }),
-            match: Joi.object().keys({
-                location: Joi.string()
-            })
-        }))
-    }))
+        column: Joi.number().integer(),
+        nodeType: Joi.string(),
+        source: Joi.string(),
+        fix: Joi.object()
+    })).required()
 }));
 
 module.exports = function (server, emitter) {
     server.route({
         method: 'POST',
-        path: '/upload/cucumber',
+        path: '/upload/eslint',
         config: {
             tags: ['upload'],
             payload: {
-                //allow: ['multipart/form-data'],
                 parse: true,
                 output: 'stream'
             },
@@ -50,15 +35,16 @@ module.exports = function (server, emitter) {
                     evaluation: Joi.string().min(1).required(),
                     evaluationTag: Joi.string().min(1).required(),
                     subject: Joi.string().min(1).required()
+                    //todo: add (optional) basePath argument
                 }
             }
         },
         handler: function(request, reply) {
-            return reqUtils.getObject(request, 'cucumber')
-            .then(o => reqUtils.validateObject(o, cucumberSchema))
+            return reqUtils.getObject(request, 'eslint')
+            .then(o => reqUtils.validateObject(o, eslintSchema))
             .then(report => {
                 emitter.emit(
-                    'uploads/cucumber',
+                    'uploads/eslint',
                     R.assoc('report', report, R.pick(['subject', 'evaluation', 'evaluationTag'], request.query))
                 );
                 return reply().code(202);

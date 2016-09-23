@@ -12,6 +12,7 @@ Scenario Outline: valid report upload
     | report        | endpoint |
     | cucumber.json | cucumber |
     | lcov.info     | lcov     |
+    | eslint.json   | eslint   |
 
 Scenario Outline: invalid report
     Given an invalid <report> report file
@@ -23,6 +24,7 @@ Scenario Outline: invalid report
     | report        | endpoint |
     | cucumber.json | cucumber |
     | lcov.info     | lcov     |
+    | eslint.json   | eslint   |
 
 Scenario Outline: missing querystring arguments
     Given a <report> report file
@@ -39,3 +41,6 @@ Examples:
     | lcov.info     | lcov     | evaluation     |
     | lcov.info     | lcov     | evaluation tag |
     | lcov.info     | lcov     | subject        |
+    | eslint.json   | eslint   | evaluation     |
+    | eslint.json   | eslint   | evaluation tag |
+    | eslint.json   | eslint   | subject        |

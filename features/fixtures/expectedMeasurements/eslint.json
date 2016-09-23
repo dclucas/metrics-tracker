@@ -1,0 +1,52 @@
+[
+    {
+        "errorCount": 0,
+        "file": "api.js",
+        "warningCount": 0
+    },
+    {
+        "errorCount": 0,
+        "file": "utils/requestUtils.js",
+        "warningCount": 0
+    },
+    {
+        "errorCount": 0,
+        "file": "utils/logger.js",
+        "warningCount": 0
+    },
+    {
+        "errorCount": 0,
+        "file": "utils/emitter.js",
+        "warningCount": 0
+    },
+    {
+        "errorCount": 2,
+        "file": "routes/lcov-upload.js",
+        "warningCount": 0
+    },
+    {
+        "errorCount": 2,
+        "file": "routes/healhcheck.js",
+        "warningCount": 0
+    },
+    {
+        "errorCount": 2,
+        "file": "routes/cucumber-upload.js",
+        "warningCount": 0
+    },
+    {
+        "errorCount": 0,
+        "file": "eventHandlers/lcov-events.js",
+        "warningCount": 0
+    },
+    {
+        "errorCount": 0,
+        "file": "eventHandlers/cucumber-events.js",
+        "warningCount": 0
+    },
+    {
+        "errorCount": 0,
+        "file": "config.js",
+        "warningCount": 0
+    }
+]
