@@ -1,11 +1,8 @@
 'use strict';
-const _ = require('lodash');
-const fs = require('fs');
 const Joi = require('joi');
-const Promise = require('bluebird');
 const uuid = require('uuid');
 const reqUtils = require('../utils/requestUtils');
-
+const R = require('ramda');
 
 const cucumberSchema = Joi.array().items(Joi.object().keys({
     id: Joi.string().required(),
@@ -58,17 +55,11 @@ module.exports = function (server, emitter) {
         handler: function(request, reply) {
             return reqUtils.getObject(request, 'cucumber')
             .then(o => reqUtils.validateObject(o, cucumberSchema))
-            .then(o => {
-                emitter.emit('uploads/cucumber', {
-                    assessmentKey: request.query.assessmentKey,
-                    examKey: request.query.examKey,
-                    subjectKey: request.query.subjectKey,
-                    //todo: convert this into a `pick` command
-                    subject: request.query.subject,
-                    evaluation: request.query.evaluation,
-                    evaluationTag: request.query.evaluationTag,
-                    report: o
-                });
+            .then(report => {
+                emitter.emit(
+                    'uploads/cucumber',
+                    R.assoc('report', report, R.pick(['subject', 'evaluation', 'evaluationTag'], request.query))
+                );
                 return reply().code(202);
             })
             // fixme: this will resolve even internal errors as 429's

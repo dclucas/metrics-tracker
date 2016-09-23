@@ -3,6 +3,6 @@ const
     cfg = require('../config');
 
 module.exports = bunyan.createLogger({
-    name: "metrics-tracker",
+    name: 'metrics-tracker',
     level: cfg.LogLevel
 });

@@ -1,12 +1,9 @@
 'use strict';
-const _ = require('lodash');
-const fs = require('fs');
 const Joi = require('joi');
-const Promise = require('bluebird');
-const uuid = require('uuid');
 const logger = require('../utils/logger');
 const reqUtils = require('../utils/requestUtils');
 const parse = require('lcov-parse');
+const R = require('ramda');
 
 module.exports = function (server, emitter) {
     server.route({
@@ -30,18 +27,16 @@ module.exports = function (server, emitter) {
         handler: function(request, reply) {
             return reqUtils.getString(request, 'lcov')
             .then(s => {
-                parse(s, function(err, data) {
+                parse(s, function(err, report) {
                     if (err) {
                         logger.warn(err);
                         return reply(err).code(400);
                     }
                     else {
-                        emitter.emit('uploads/lcov', {
-                            subject: request.query.subject,
-                            evaluation: request.query.evaluation,
-                            evaluationTag: request.query.evaluationTag,
-                            report: data
-                        });
+                        emitter.emit(
+                            'uploads/lcov', 
+                            R.assoc('report', report, R.pick(['subject', 'evaluation', 'evaluationTag'], request.query))
+                        );
 
                         return reply().code(202);                        
                     }

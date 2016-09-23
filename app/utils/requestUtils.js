@@ -1,13 +1,9 @@
 'use strict';
-const 
-    _ = require('lodash'),
-    fs = require('fs'),
-    Joi = require('joi'),
-    Promise = require('bluebird'),
-    uuid = require('uuid');
+const Joi = require('joi');
+const Promise = require('bluebird');
 
-function streamToString(stream, cb) {
-    return new Promise(function(resolve, reject){
+function streamToString(stream) {
+    return new Promise(function(resolve){
         const chunks = [];
         stream.on('data', (chunk) => {
             chunks.push(chunk.toString());
@@ -21,7 +17,7 @@ function streamToString(stream, cb) {
 function getString(request, key) {
     const data = request.payload;
     if (data[key]) {
-        return streamToString(data[key])
+        return streamToString(data[key]);
     } else {
         return Promise.reject(`Missing data in '${key}' field`);
     }
@@ -34,11 +30,11 @@ function getObject(request, key) {
 
 function validateObject(object, schema) {
     return new Promise(function(resolve, reject) {
-        Joi.validate(object, schema, function (err, value) {
+        Joi.validate(object, schema, function (err) {
             if (err) reject(err);
             resolve(object);
         });
-    })
+    });
 }
 
 module.exports.getString = getString;

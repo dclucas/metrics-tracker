@@ -48,6 +48,7 @@
     "chai": "^3.5.0",
     "chai-subset": "^1.2.2",
     "cucumber": "^0.10.3",
+    "eslint": "^3.2.2",
     "istanbul": "^0.4.3",
     "node-libcurl": "^1.0.0"
   }

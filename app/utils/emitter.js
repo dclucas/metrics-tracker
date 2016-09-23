@@ -1,6 +1,4 @@
-const 
-    Rx = require('rx'),
-    hasOwnProp = {}.hasOwnProperty;
+const Rx = require('rx');
 
 function createName (name) {
     return '$' + name;

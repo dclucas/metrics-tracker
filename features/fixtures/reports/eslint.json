@@ -1,0 +1,147 @@
+[
+    {
+        "filePath": "/Users/lucasd/src/oss/dclucas/metrics-tracker/app/api.js",
+        "messages": [],
+        "errorCount": 0,
+        "warningCount": 0
+    },
+    {
+        "filePath": "/Users/lucasd/src/oss/dclucas/metrics-tracker/app/config.js",
+        "messages": [],
+        "errorCount": 0,
+        "warningCount": 0
+    },
+    {
+        "filePath": "/Users/lucasd/src/oss/dclucas/metrics-tracker/app/eventHandlers/cucumber-events.js",
+        "messages": [],
+        "errorCount": 0,
+        "warningCount": 0
+    },
+    {
+        "filePath": "/Users/lucasd/src/oss/dclucas/metrics-tracker/app/eventHandlers/lcov-events.js",
+        "messages": [],
+        "errorCount": 0,
+        "warningCount": 0
+    },
+    {
+        "filePath": "/Users/lucasd/src/oss/dclucas/metrics-tracker/app/routes/cucumber-upload.js",
+        "messages": [
+            {
+                "ruleId": "no-unused-vars",
+                "severity": 2,
+                "message": "'uuid' is defined but never used.",
+                "line": 3,
+                "column": 7,
+                "nodeType": "Identifier",
+                "source": "const uuid = require('uuid');"
+            },
+            {
+                "ruleId": "semi",
+                "severity": 2,
+                "message": "Missing semicolon.",
+                "line": 73,
+                "column": 2,
+                "nodeType": "ExpressionStatement",
+                "source": "}",
+                "fix": {
+                    "range": [
+                        2466,
+                        2466
+                    ],
+                    "text": ";"
+                }
+            }
+        ],
+        "errorCount": 2,
+        "warningCount": 0
+    },
+    {
+        "filePath": "/Users/lucasd/src/oss/dclucas/metrics-tracker/app/routes/healhcheck.js",
+        "messages": [
+            {
+                "ruleId": "no-unused-vars",
+                "severity": 2,
+                "message": "'Types' is defined but never used.",
+                "line": 3,
+                "column": 5,
+                "nodeType": "Identifier",
+                "source": "var Types = require('joi');"
+            },
+            {
+                "ruleId": "semi",
+                "severity": 2,
+                "message": "Missing semicolon.",
+                "line": 13,
+                "column": 2,
+                "nodeType": "ExpressionStatement",
+                "source": "}",
+                "fix": {
+                    "range": [
+                        257,
+                        257
+                    ],
+                    "text": ";"
+                }
+            }
+        ],
+        "errorCount": 2,
+        "warningCount": 0
+    },
+    {
+        "filePath": "/Users/lucasd/src/oss/dclucas/metrics-tracker/app/routes/lcov-upload.js",
+        "messages": [
+            {
+                "ruleId": "semi",
+                "severity": 2,
+                "message": "Missing semicolon.",
+                "line": 44,
+                "column": 15,
+                "nodeType": "ReturnStatement",
+                "source": "            })",
+                "fix": {
+                    "range": [
+                        1512,
+                        1512
+                    ],
+                    "text": ";"
+                }
+            },
+            {
+                "ruleId": "semi",
+                "severity": 2,
+                "message": "Missing semicolon.",
+                "line": 47,
+                "column": 2,
+                "nodeType": "ExpressionStatement",
+                "source": "}",
+                "fix": {
+                    "range": [
+                        1532,
+                        1532
+                    ],
+                    "text": ";"
+                }
+            }
+        ],
+        "errorCount": 2,
+        "warningCount": 0
+    },
+    {
+        "filePath": "/Users/lucasd/src/oss/dclucas/metrics-tracker/app/utils/emitter.js",
+        "messages": [],
+        "errorCount": 0,
+        "warningCount": 0
+    },
+    {
+        "filePath": "/Users/lucasd/src/oss/dclucas/metrics-tracker/app/utils/logger.js",
+        "messages": [],
+        "errorCount": 0,
+        "warningCount": 0
+    },
+    {
+        "filePath": "/Users/lucasd/src/oss/dclucas/metrics-tracker/app/utils/requestUtils.js",
+        "messages": [],
+        "errorCount": 0,
+        "warningCount": 0
+    }
+]

@@ -1,8 +1,4 @@
 'use strict';
-const _ = require('lodash');
-const Joi = require('joi');
-const Promise = require('bluebird');
-const uuid = require('uuid');
 const logger = require('../utils/logger');
 const R = require('ramda');
 const cfg = require('../config');
@@ -19,7 +15,7 @@ function getLastMatch(s1, s2) {
 
 module.exports = function (server, emitter) {
     emitter.listen('uploads/lcov', report => {
-        logger.trace(`handling lcov upload event at influx processor`);
+        logger.trace('handling lcov upload event at influx processor');
         const timestamp = new Date();
         const basePos = R.reduce(
             (accum, val) => ({ 
@@ -30,18 +26,18 @@ module.exports = function (server, emitter) {
             R.pluck('file', report.report)
         );
         const influxLines = R.map(f => ({ 
-                subject: report.subject, 
-                evaluation: report.evaluation, 
-                evaluationTag: report.evaluationTag, 
-                time: timestamp,
-                file: f.file.substring(basePos.accum),
-                branchesHits: f.branches.hit,
-                branchesFound: f.branches.found,
-                linesHits: f.lines.hit,
-                linesFound: f.lines.found,
-                functionsHits: f.functions.hit,
-                functionsFound: f.functions.found,
-            }), 
+            subject: report.subject, 
+            evaluation: report.evaluation, 
+            evaluationTag: report.evaluationTag, 
+            time: timestamp,
+            file: f.file.substring(basePos.accum),
+            branchesHits: f.branches.hit,
+            branchesFound: f.branches.found,
+            linesHits: f.lines.hit,
+            linesFound: f.lines.found,
+            functionsHits: f.functions.hit,
+            functionsFound: f.functions.found
+        }), 
             report.report);
         const metrics = ['branchesHits', 'branchesFound', 'linesHits', 'linesFound', 'functionsHits', 'functionsFound', 'time'];
         R.forEach(l => 
@@ -52,4 +48,4 @@ module.exports = function (server, emitter) {
                 err => err? logger.error(err) : null), 
             influxLines);
     });     
-}
+};
