@@ -1,43 +1,11 @@
 'use strict';
-const 
-    _ = require('lodash'),
-    fs = require('fs'),
-    Joi = require('joi'),
-    Promise = require('bluebird'),
-    uuid = require('uuid');
+const _ = require('lodash');
+const fs = require('fs');
+const Joi = require('joi');
+const Promise = require('bluebird');
+const uuid = require('uuid');
+const reqUtils = require('../utils/requestUtils');
 
-function streamToString(stream, cb) {
-    return new Promise(function(resolve, reject){
-        const chunks = [];
-        stream.on('data', (chunk) => {
-            chunks.push(chunk.toString());
-        });
-        stream.on('end', () => {
-            resolve(chunks.join(''));
-        });
-    });
-}
-
-function getObject(request) {
-    const data = request.payload;
-    if (data.cucumber) {
-        return streamToString(data.cucumber)
-        .then(function(str) {
-            return JSON.parse(str);
-        });
-    }
-    //todo: reject this with a clear message (and validate it through a test)
-    return Promise.reject();
-}
-
-function validateObject(object, schema) {
-    return new Promise(function(resolve, reject) {
-        Joi.validate(object, schema, function (err, value) {
-            if (err) reject(err);
-            resolve(object);
-        });
-    })
-}
 
 const cucumberSchema = Joi.array().items(Joi.object().keys({
     id: Joi.string().required(),
@@ -88,8 +56,8 @@ module.exports = function (server, emitter) {
             }
         },
         handler: function(request, reply) {
-            return getObject(request)
-            .then(o => validateObject(o, cucumberSchema))
+            return reqUtils.getObject(request, 'cucumber')
+            .then(o => reqUtils.validateObject(o, cucumberSchema))
             .then(o => {
                 emitter.emit('uploads/cucumber', {
                     assessmentKey: request.query.assessmentKey,

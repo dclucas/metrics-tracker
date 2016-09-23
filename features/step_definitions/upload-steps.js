@@ -1,16 +1,16 @@
 module.exports = function() {
-    const 
-        _ = require('lodash'),
-        Promise = require('bluebird'),
-        chai = require('chai'),
-        expect = chai.expect,
-        chaiSubset = require('chai-subset'),
-        uuid = require('uuid'),
-        cfg = require('../../app/config'),
-        influx = require('influx')(cfg.influxUrl),
-        delay = Promise.delay(1000),
-        that = this,
-        measurements = {
+
+    const _ = require('lodash');
+    const Promise = require('bluebird');
+    const chai = require('chai');
+    const expect = chai.expect;
+    const chaiSubset = require('chai-subset');
+    const uuid = require('uuid');
+    const cfg = require('../../app/config');
+    const influx = require('influx')(cfg.influxUrl);
+    const delay = Promise.delay(1000);
+    const that = this;
+    const measurements = {
             'cucumber.json': 'cucumber',
             'lcov.info': 'coverage'
         };

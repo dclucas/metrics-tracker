@@ -1,34 +1,12 @@
 'use strict';
-const 
-    _ = require('lodash'),
-    fs = require('fs'),
-    Joi = require('joi'),
-    Promise = require('bluebird'),
-    uuid = require('uuid');
+const _ = require('lodash');
+const fs = require('fs');
+const Joi = require('joi');
+const Promise = require('bluebird');
+const uuid = require('uuid');
 const logger = require('../utils/logger');
-    
+const reqUtils = require('../utils/requestUtils');
 const parse = require('lcov-parse');
-
-function streamToString(stream, cb) {
-    return new Promise(function(resolve, reject){
-        const chunks = [];
-        stream.on('data', (chunk) => {
-            chunks.push(chunk.toString());
-        });
-        stream.on('end', () => {
-            resolve(chunks.join(''));
-        });
-    });
-}
-//todo: refactor these methods into util functions
-function getString(request) {
-    const data = request.payload;
-    if (data.lcov) {
-        return streamToString(data.lcov)
-    }
-    //todo: reject this with a clear message (and validate it through a test)
-    return Promise.reject();
-}
 
 module.exports = function (server, emitter) {
     server.route({
@@ -50,7 +28,7 @@ module.exports = function (server, emitter) {
             }
         },
         handler: function(request, reply) {
-            return getString(request)
+            return reqUtils.getString(request, 'lcov')
             .then(s => {
                 parse(s, function(err, data) {
                     if (err) {
