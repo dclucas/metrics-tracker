@@ -1,0 +1,13 @@
+---
+pipeline: "workflows/node/CanaryReleaseStageAndApprovePromote/Jenkinsfile"
+buildName: "metrics-tracker"
+codeReview: false
+links:
+  Git: "git@github.com:dclucas/metrics-tracker.git"
+  Job: "http://192.168.64.2:30598/job/metrics-tracker"
+  Production: "http://10.0.0.13:80/kubernetes/pods?namespace=default-production"
+  Staging: "http://10.0.0.13:80/kubernetes/pods?namespace=default-staging"
+environments:
+  Staging: "default-staging"
+  Production: "default-production"
+useLocalFlow: true
