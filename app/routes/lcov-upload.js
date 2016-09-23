@@ -5,6 +5,9 @@ const
     Joi = require('joi'),
     Promise = require('bluebird'),
     uuid = require('uuid');
+const logger = require('../utils/logger');
+    
+const parse = require('lcov-parse');
 
 function streamToString(stream, cb) {
     return new Promise(function(resolve, reject){
@@ -49,8 +52,22 @@ module.exports = function (server, emitter) {
         handler: function(request, reply) {
             return getString(request)
             .then(s => {
-                console.log(s);
-                return reply().code(202);
+                parse(s, function(err, data) {
+                    if (err) {
+                        logger.warn(err);
+                        return reply(err).code(400);
+                    }
+                    else {
+                        emitter.emit('uploads/lcov', {
+                            subject: request.query.subject,
+                            evaluation: request.query.evaluation,
+                            evaluationTag: request.query.evaluationTag,
+                            report: data
+                        });
+
+                        return reply().code(202);                        
+                    }
+                });
             })
             /*
             return getObject(request)

@@ -4,19 +4,23 @@ module.exports = function() {
         Promise = require('bluebird'),
         chai = require('chai'),
         expect = chai.expect,
-        expectedMetrics = require('../fixtures/cucumber-influx-metrics.json'),
         chaiSubset = require('chai-subset'),
         uuid = require('uuid'),
         cfg = require('../../app/config'),
         influx = require('influx')(cfg.influxUrl),
         delay = Promise.delay(1000),
-        that = this;
+        that = this,
+        measurements = {
+            'cucumber.json': 'cucumber',
+            'lcov.info': 'coverage'
+        };
 
     chai.use(chaiSubset);
 
     this.Given(/^a ([\w\.]+) report file$/, function (report) {
         this.filePath = `../fixtures/reports/${report}`;
         this.reportKind = report;
+        this.expectedMeasurements = require(`../fixtures/expectedMeasurements/${measurements[report]}.json`);
     });
 
     this.Then(/^I receive a success response$/, function () {
@@ -72,12 +76,10 @@ module.exports = function() {
         });
     });
 
-    this.Then(/^the corresponding metrics get created$/, function (callback) {
-        callback(null, 'pending');
-        /*
+    this.Then(/^the corresponding metrics get created$/, function () {
         //todo: change this delay for something less flaky (such as watching SSE)
         return Promise.delay(2000).then(() => new Promise((resolve, reject) =>
-            influx.query(`SELECT * FROM cucumber WHERE evaluationTag='${this.evaluationTag}'`,
+            influx.query(`SELECT * FROM ${measurements[this.reportKind]} WHERE evaluationTag='${this.evaluationTag}'`,
                 (err, results) => {
                     if (err) {
                         reject(err);
@@ -85,12 +87,11 @@ module.exports = function() {
                         expect(results).not.to.be.empty;
                         const metrics = results[0];
                         expect(metrics).not.to.be.empty;
-                        expect(metrics).to.containSubset(expectedMetrics);
+                        expect(metrics).to.containSubset(this.expectedMeasurements);
                         resolve(true);
                     }
                 }
             )
         ))
-        */
     });
 }
