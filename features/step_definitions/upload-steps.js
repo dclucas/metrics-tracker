@@ -8,12 +8,11 @@ module.exports = function() {
     const uuid = require('uuid');
     const cfg = require('../../app/config');
     const influx = require('influx')(cfg.influxUrl);
-    const delay = Promise.delay(1000);
-    const that = this;
     const measurements = {
-            'cucumber.json': 'cucumber',
-            'lcov.info': 'coverage'
-        };
+        'cucumber.json': 'cucumber',
+        'lcov.info': 'coverage',
+        'eslint.json': 'eslint'
+    };
 
     chai.use(chaiSubset);
 
@@ -33,25 +32,26 @@ module.exports = function() {
     });
 
     this.Then(/^I receive an error status code$/, function () {
-        //expect(this.response.statusCode).to.be.within(400, 499);
         expect(this.response.statusCode).to.equal(400);
     });
 
     this.Then(/^the response message contains details on the failed validation$/, function () {
         if (this.reportKind === 'cucumber.json') {
             expect(JSON.stringify(this.response.body)).to.match(/\bid\b.*\brequired/);
-        } else {
+        } else if (this.reportKind === 'lcov.info') {
             expect(JSON.stringify(this.response.body)).to.match(/Failed to parse string/);
+        } else {
+            expect(JSON.stringify(this.response.body)).to.match(/\bfilePath\b.*\brequired/);
         }
     });
 
     this.Given(/^I am missing a\(n\) (.*) parameter$/, function (param) {
         const params = {
-            evaluation: 'test-eval',
-            evaluationTag: '123',
-            subject: 'test-subject'
-        },
-        createKVP = (key) => `${key}=${params[key]}`;
+                evaluation: 'test-eval',
+                evaluationTag: '123',
+                subject: 'test-subject'
+            },
+            createKVP = (key) => `${key}=${params[key]}`;
         this.missingKey = _.camelCase(param);
         this.queryString = _.reduce(
             _.keys(_.omit(params, this.missingKey)),
@@ -98,6 +98,6 @@ module.exports = function() {
                     }
                 }
             )
-        ))
+        ));
     });
-}
+};
