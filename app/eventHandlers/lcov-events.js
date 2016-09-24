@@ -5,6 +5,10 @@ const cfg = require('../config');
 const influx = require('influx')(cfg.influxUrl);
 const getBasePos = require('../utils/getBasePos');
 
+function calcCoverage(metric) {
+    return metric.found? metric.hit / metric.found : 1.0;
+}
+
 module.exports = function (server, emitter) {
     emitter.listen('uploads/lcov', report => {
         logger.trace('handling lcov upload event at influx processor');
@@ -18,13 +22,16 @@ module.exports = function (server, emitter) {
             file: f.file.substring(basePos),
             branchesHits: f.branches.hit,
             branchesFound: f.branches.found,
+            branchesCoverage: calcCoverage(f.branches),
             linesHits: f.lines.hit,
             linesFound: f.lines.found,
+            linesCoverage: calcCoverage(f.lines),
             functionsHits: f.functions.hit,
-            functionsFound: f.functions.found
+            functionsFound: f.functions.found,
+            functionsCoverage: calcCoverage(f.lines)
         }), 
             report.report);
-        const metrics = ['branchesHits', 'branchesFound', 'linesHits', 'linesFound', 'functionsHits', 'functionsFound', 'time'];
+        const metrics = ['branchesHits', 'branchesFound', 'linesHits', 'linesFound', 'functionsHits', 'functionsFound', 'time', 'branchesCoverage', 'linesCoverage', 'functionsCoverage'];
         R.forEach(l => 
             influx.writePoint(
                 'coverage', 
