@@ -34,7 +34,9 @@ module.exports = function (server, emitter) {
                 'cucumber', 
                 R.pick(['status', 'duration', 'time'], l), 
                 R.omit(['status', 'duration', 'time'], l),
-                err => err? logger.error(err) : null), 
+                err => {
+                    if(err) logger.error(err);
+                }), 
             influxLines);
     });     
 };

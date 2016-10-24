@@ -1,5 +1,4 @@
 module.exports = function() {
-
     const _ = require('lodash');
     const Promise = require('bluebird');
     const chai = require('chai');
@@ -66,7 +65,7 @@ module.exports = function() {
 
     this.Given(/^an evaluation, evaluation tag and subject keys$/, function () {
         this.evaluationTag = `tag-${uuid.v4()}`;
-        this.queryString = `subject=test-subject-${uuid.v4()}&evaluation=test-eval-${uuid.v4()}&evaluationTag=${this.evaluationTag}`;
+        this.queryString = `subject=test-subject&evaluation=test-eval&evaluationTag=${this.evaluationTag}`;
     });
 
     this.When(/^I do a curl POST against the (\w+) upload endpoint$/, function (endpoint) {
