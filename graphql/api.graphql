@@ -1,0 +1,53 @@
+scalar DateTime
+
+interface Node {
+	id: ID!
+}
+
+enum MetricsKind {
+	BOOLEAN
+	FLOAT
+	NORMALIZED_FLOAT
+}
+
+type Metrics implements Node {
+	id: ID!
+	name: String!
+	kind: MetricsKind!
+	minimized: Boolean
+}
+
+interface BaseCollectedMetrics {
+    metrics: Metrics!
+}
+
+type FloatCollectedMetrics implements Node BaseCollectedMetrics {
+  id: ID!
+  metrics: Metrics!
+	value: Float!
+}
+
+type BooleanCollectedMetrics implements Node BaseCollectedMetrics {
+  id: ID!
+  metrics: Metrics!
+	value: Boolean!
+}
+
+union CollectedMetrics = FloatCollectedMetrics | BooleanCollectedMetrics
+
+type Exam implements Node {
+	id: ID!
+	createdOn: DateTime!
+}
+
+type Subject implements Node {
+    id: ID!
+    name: String
+    description: String
+    metricsSummary: [CollectedMetrics!]
+}
+
+type Query {
+  hello: String
+	subject(id: ID!): Subject
+}

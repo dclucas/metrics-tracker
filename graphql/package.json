@@ -1,5 +1,32 @@
 {
+  "name": "metrics-tracker-query-api",
+  "version": "0.1.0",
+  "main": "app/index.js",
+  "scripts": {
+    "start": "node index.js",
+    "mon": "nodemon",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
   "dependencies": {
-    "express-graphql": "^0.6.11"
+    "apollo-server-express": "^1.1.2",
+    "body-parser": "^1.18.0",
+    "bunyan": "^1.8.12",
+    "dotenv": "^4.0.0",
+    "express": "^4.15.4",
+    "express-graphql": "^0.6.11",
+    "graphql": "^0.11.3",
+    "graphql-iso-date": "^3.3.0",
+    "graphql-tools": "^1.2.2",
+    "ramda": "^0.24.1",
+    "ramda-fantasy": "^0.8.0",
+    "sanctuary": "^0.13.2",
+    "sanctuary-type-classes": "^6.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.11.0"
   }
 }
