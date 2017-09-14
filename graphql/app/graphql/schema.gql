@@ -1,0 +1,122 @@
+# TODO: add the concept of tags (to builds, subjects, metrics, etc)
+
+scalar DateTime
+
+interface Node {
+	id: ID!
+}
+
+enum ValueType {
+	BOOLEAN
+	FLOAT
+	INT
+}
+
+enum OptimizationKind {
+    MAX
+    MIN
+}
+
+# "Pure" metrics descriptor -- information about the metrics itself
+type Metrics implements Node {
+	id: ID!
+    # unique, user-friendly name for the metrics
+	name: String!
+    # determines whether the value should be interpreted as a float, an int or a boolean
+	valueType: ValueType!
+    # determines whether this metric should be optimized, and how
+    optimizeFor: OptimizationKind
+    # determines whether metrics values are normalized ([0..1] for FLOAT metrics, no such a concept for other value types)
+    normalized: Boolean
+    # a high-level grouping of metrics (eg: "automated tests")
+    category: String
+    # unit of measurement for test (default: unit count)
+    unit: String
+}
+
+# Describes a metrics data point, collected during an assessment
+type Measurement implements Node {
+    id: ID!
+    # Further info (metadata) about the metrics
+    metrics: Metrics!
+    # metrics value -- parse it further in case of non-float types (boolean, int)
+    value: Float!
+    # parent assessment
+    assessment: Assessment!
+    # determines the goal at the moment of metric creation. 
+    goal: MetricsGoal
+}
+
+# Represents a collection of metrics data points, gathered at a specific point in time
+type Assessment implements Node {
+	id: ID!
+    # When the assessment was created.
+	createdOn: DateTime!
+    # The kind of the assessment (eg: build, manual tests, etc)
+    type: String!
+    # A collection of all measurements collected during the assessment
+    measurements: [Measurement]
+}
+
+type AssessmentEdge {
+    cursor: String!
+    node: Assessment
+}
+
+type AssessmentConnection {
+    edges: [AssessmentEdge]
+    pageInfo: PageInfo!
+}
+
+enum MatchKind {
+    EQUALS
+    NOT_EQUALS
+    GREATER_THAN
+    LESSER_THAN
+    GREATER_OR_EQUAL
+    LESSER_OR_EQUAL
+}
+
+# Represents a subject goal for a given metric
+type MetricsGoal {
+    # Which metrics this goal relates to
+    metrics: Metrics!
+    # Desired value for the metrics
+    value: Float
+    # How to evaluate the desired value against the current one
+    matchBy: MatchKind
+    # How important (normalized) this goal is
+    weight: Float
+    # add matchWith <- how to compare the current value: current only (default), previous, previous N, mean, average, max
+    # The subject that owns the goal
+    subject: Subject
+}
+
+# A subject of metrics gathering
+type Subject implements Node {
+    id: ID!
+    name: String
+    description: String
+    metricsSummary: [Measurement]
+    assessments: AssessmentConnection
+    goals: [MetricsGoal]
+    parent: Subject
+    children: [Subject]
+    kind: String
+}
+
+type PageInfo {
+    hasNextPage: Boolean!
+    hasPreviousPage: Boolean!
+    startCursor: String
+    endCursor: String
+}
+
+type Query {
+    # Provides data (metrics + configuration) for a given subject
+    subject(id: ID!): Subject
+    # Provides details of a given exam
+    assessment(id: ID!): Assessment
+    # Lists all metrics descriptors in the system
+    metrics: [Metrics]
+}

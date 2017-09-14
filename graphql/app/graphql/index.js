@@ -1,88 +1,58 @@
 'use strict'
 
-const { makeExecutableSchema } = require('graphql-tools');
+const { makeExecutableSchema, addMockFunctionsToSchema } = require('graphql-tools');
 const { GraphQLDateTime } = require('graphql-iso-date');
-
+const casual = require('casual');
+const requireText = require('require-text');
+const data = require('../../setup/data');
 // Construct a schema, using GraphQL schema language
-const typeDefs = `
-scalar DateTime
-
-interface Node {
-	id: ID!
-}
-
-enum MetricsKind {
-	BOOLEAN
-	FLOAT
-	NORMALIZED_FLOAT
-}
-
-type Metrics implements Node {
-	id: ID!
-	name: String!
-	kind: MetricsKind!
-	minimized: Boolean
-}
-
-interface BaseCollectedMetrics {
-    metrics: Metrics!
-}
-
-type FloatCollectedMetrics implements Node BaseCollectedMetrics {
-  id: ID!
-  metrics: Metrics!
-	value: Float!
-}
-
-type BooleanCollectedMetrics implements Node BaseCollectedMetrics {
-  id: ID!
-  metrics: Metrics!
-	value: Boolean!
-}
-
-union CollectedMetrics = FloatCollectedMetrics | BooleanCollectedMetrics
-
-type Exam implements Node {
-	id: ID!
-	createdOn: DateTime!
-}
-
-type Subject implements Node {
-    id: ID!
-    name: String
-    description: String
-    metricsSummary: [CollectedMetrics!]
-}
-
-type Query {
-  hello: String
-	subject(id: ID!): Subject
-}
-`;
-
-// Provide resolver functions for your schema fields
-const resolvers = {
-  DateTime: GraphQLDateTime,
-  Query: {
-    hello: (root, args, context) => {
-      return 'Hello world!';
-    },
-    subject: () => ({
-      id: "1",
-      name: "test",
-      descriptor: "",
-      collectedMetrics: []
-    })
-  },
-};
+const typeDefs = requireText('./schema.gql', require);
 
 function createResolvers(repos, logger) {
-    return resolvers;
+    return {
+        DateTime: GraphQLDateTime,
+        Query: {
+            subject: () => ({
+                id: "1",
+                name: "test",
+                descriptor: "",
+                collectedMetrics: []
+            })
+        },
+    };
 }
 
 module.exports.createSchema = (repos, logger) => {
+    const schema = makeExecutableSchema({
+        typeDefs,
+        resolvers: {
+            DateTime: GraphQLDateTime
+        }
+    });
+    addMockFunctionsToSchema({
+        schema,
+        mocks: {
+            DateTime: () => '2017-09-13T10:15:30Z',
+            Subject: () => ({
+                name: casual.title,
+                description: casual.description,
+                metricsSummary: [{
+                        metrics: {
+                            name: "Code coverage",
+                            valueType: "FLOAT",
+                            optimizeFor: "MAX",
+                            normalized: true
+                        },
+                        value: casual.random,
+                    },
+
+                ]
+            })
+        }
+    });
+    return schema;
     return makeExecutableSchema({
-        typeDefs, 
-        resolvers: createResolvers(repos, logger)
+        typeDefs,
+        resolvers: createResolvers(repos, logger),
     });
 }

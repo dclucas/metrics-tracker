@@ -19,32 +19,42 @@ type Metrics implements Node {
 
 interface BaseCollectedMetrics {
     metrics: Metrics!
+    exam: Exam!
 }
 
 type FloatCollectedMetrics implements Node BaseCollectedMetrics {
-  id: ID!
-  metrics: Metrics!
-	value: Float!
+    id: ID!
+    metrics: Metrics!
+    value: Float!
+#    exam: Exam! @relation(name: "examMetrics")
 }
 
-type BooleanCollectedMetrics implements Node BaseCollectedMetrics {
-  id: ID!
-  metrics: Metrics!
-	value: Boolean!
-}
+#type BooleanCollectedMetrics implements Node BaseCollectedMetrics {
+#    id: ID!
+#    metrics: Metrics!
+#    value: Boolean!
+#    exam: Exam!
+#}
 
-union CollectedMetrics = FloatCollectedMetrics | BooleanCollectedMetrics
+#union CollectedMetrics = FloatCollectedMetrics | BooleanCollectedMetrics
 
-type Exam implements Node {
-	id: ID!
-	createdOn: DateTime!
-}
+# type Exam implements Node {
+# 	id: ID!
+# 	createdOn: DateTime!
+# }
 
 type Subject implements Node {
     id: ID!
     name: String
     description: String
-    metricsSummary: [CollectedMetrics!]
+    metricsSummary: [FloatCollectedMetrics!] @relation(name: "metricsSummary")
+}
+
+type PageInfo {
+    hasNextPage: Boolean!
+    hasPreviousPage: Boolean!
+    startCursor: String
+    endCursor: String
 }
 
 type Query {
