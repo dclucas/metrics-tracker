@@ -38,7 +38,8 @@ module.exports.createSchema = (repos, logger) => {
                 description: casual.description,
                 metricsSummary: [{
                         metrics: {
-                            name: "Code coverage",
+                            id: "BRANCH_COVERAGE",
+                            name: "Branch coverage",
                             valueType: "FLOAT",
                             optimizeFor: "MAX",
                             normalized: true

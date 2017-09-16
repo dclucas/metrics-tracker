@@ -21,7 +21,7 @@ export default() => {
             <div>
                 <Route path="/" exact render={(props) => <App auth={auth} {...props}/>}/>
                 <Route path="/u/:username" render={props => <User auth={auth} {...props}/>}/>
-                <Route path="/s/:subjectId" render={(props) => <App auth={auth} {...props}/>}/>
+                <Route path="/s/:subjectId" render={(props) => <Subject auth={auth} {...props}/>}/>
                 <Route
                     path="/callback"
                     render={(props) => {

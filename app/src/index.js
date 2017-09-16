@@ -15,7 +15,7 @@ const auth = new Auth();
 injectTapEventPlugin();
 
 const networkInterface = createNetworkInterface({
-    uri: process.env.REACT_APP_GRAPHQL_URL || 'http://localhost:8080/graphql?',
+    uri: process.env.REACT_APP_GRAPHQL_URL || 'http://localhost:3001/graphql',
   });
 
 networkInterface.use([{
