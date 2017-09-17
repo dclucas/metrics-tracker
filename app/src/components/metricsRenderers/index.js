@@ -5,6 +5,10 @@ import * as R from 'ramda';
 // todo: refactor color to use theme
 const ValueContainer = styled.div`
     color: ${({metGoal, goal}) => metGoal? 'green' : goal? 'red' : 'black' };
+    width: 100%;
+    font-size: 3.3em;
+    text-align: center;
+    margin-top: -.25em;
 `;
 
 const comparers = {

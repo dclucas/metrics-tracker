@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import muiThemeable from 'material-ui/styles/muiThemeable';
 import * as R from 'ramda'
 import * as MetricsRenderers from './metricsRenderers'
+import {GridList, GridTile} from 'material-ui/GridList';
 import Paper from 'material-ui/Paper';
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 
@@ -19,11 +20,24 @@ const SubjectDescription = styled.div`
     font-size: small;
 `
 
-const MetricsName = styled.h3``
+const MetricsListContainer = styled.div`
+    display: flex;
+    padding: .25em;
+`
 
-const MetricsSummaryContainer = styled.div``
+const MetricsEntryContainer = styled(Card)`
+    width: 10em;
+    height: 10em;
+    margin: .25em;
+`
 
-const MetricsSummaryContainer2 = (props) => <Card />
+const MetricsEntryHeader = styled(CardHeader)`
+`
+
+const MetricsEntryText = styled(CardText)`
+    padding: 0px;
+    margin: 0px;
+`
 
 const parseBoolean = ({value})  => R.cond([
         [R.equals(0), R.always(<span>false</span>) ],
@@ -47,12 +61,14 @@ const valueParsers = {
 function renderMetricsSummary(summary) {
     const id = R.path(['metrics', 'id'], summary);
     const ValueRenderer = R.propOr(MetricsRenderers.DEFAULT, id, MetricsRenderers);
-    return <Card key={id}>
-        <CardTitle>{summary.metrics.name}</CardTitle>
-        <CardText>
-            <ValueRenderer {...{summary}}/>
-        </CardText>
-    </Card>    
+    return <MetricsEntryContainer key={id}>
+        <MetricsEntryHeader
+            title={summary.metrics.name}
+        />
+        <MetricsEntryText>
+            <ValueRenderer {...{summary}} style={{padding:'0px',backgroundColor:'blue'}}/>
+        </MetricsEntryText>
+    </MetricsEntryContainer>    
 }
 
 function SubjectDetails(props) {
@@ -62,7 +78,9 @@ function SubjectDetails(props) {
         <SubjectDescription {...{palette}}>{subject.description}</SubjectDescription>
         <MetricsContainer>
             <MetricsHeader>Metrics</MetricsHeader>
-            { R.map(renderMetricsSummary, R.pathOr([], ['metricsSummary'], subject) ) }
+            <MetricsListContainer>  
+                { R.map(renderMetricsSummary, R.pathOr([], ['metricsSummary'], subject) ) }
+            </MetricsListContainer>
         </MetricsContainer>
     </div>
 }
