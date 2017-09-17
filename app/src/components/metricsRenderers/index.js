@@ -9,11 +9,21 @@ const ValueContainer = styled.div`
 
 const comparers = {
     EQUALS: R.equals,
-    NOT_EQUALS: null,
+    NOT_EQUALS: R.compose(R.not, R.equals),
     GREATER_THAN: R.gt,
     LESSER_THAN: R.lt,
     GREATER_OR_EQUAL: R.gte,
     LESSER_OR_EQUAL: R.lte
+}
+
+// todo: localize this
+const comparerTexts = {
+    EQUALS: 'does not equal',
+    NOT_EQUALS: 'equals',
+    GREATER_THAN: 'is not greater than',
+    LESSER_THAN: 'is less than',
+    GREATER_OR_EQUAL: 'is less than',
+    LESSER_OR_EQUAL: 'is greater than',
 }
 
 // todo: turn this into a "maybe"
@@ -36,12 +46,13 @@ const maximumSignificantDigits = 3;
 const perc = (x) => Number(x).toLocaleString(undefined,{style: 'percent', maximumSignificantDigits})
 const frac = (x) => Number(x).toLocaleString(undefined,{maximumSignificantDigits})
 
-const PercentageRenderer = ({summary}) => (
+const PercentageRenderer = (summary) => (
 <ValueContainer {...summary}
 >
-    {/*Math.round(summary.value * 1000) / 10*/}
     {perc(summary.value)}
 </ValueContainer>)
 
-export const BRANCH_COVERAGE = ({summary}) => <PercentageRenderer {...{summary: flattenSummary(summary)}}/>
-export const DEFAULT = <PercentageRenderer />
+export const BRANCH_COVERAGE = ({summary}) => <PercentageRenderer {...flattenSummary(summary)}/>
+export const PASSING_TESTS = ({summary}) => <PercentageRenderer {...flattenSummary(summary)}/>
+// todo: implement proper default behavior
+export const DEFAULT = ({summary}) => <PercentageRenderer {...flattenSummary(summary)}/>

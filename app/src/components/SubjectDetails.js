@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import muiThemeable from 'material-ui/styles/muiThemeable';
 import * as R from 'ramda'
 import * as MetricsRenderers from './metricsRenderers'
+import Paper from 'material-ui/Paper';
+import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 
 const SubjectTitle = styled.h1`
 `
@@ -20,6 +22,8 @@ const SubjectDescription = styled.div`
 const MetricsName = styled.h3``
 
 const MetricsSummaryContainer = styled.div``
+
+const MetricsSummaryContainer2 = (props) => <Card />
 
 const parseBoolean = ({value})  => R.cond([
         [R.equals(0), R.always(<span>false</span>) ],
@@ -41,12 +45,14 @@ const valueParsers = {
 }
 
 function renderMetricsSummary(summary) {
-    const id = R.pathOr('DEFAULT', ['metrics', 'id'], summary);
-    const ValueRenderer = MetricsRenderers[id];
-    return <MetricsSummaryContainer key={id}>
-        <MetricsName>{summary.metrics.name}</MetricsName>
-        <ValueRenderer {...{summary}}/>
-    </MetricsSummaryContainer>    
+    const id = R.path(['metrics', 'id'], summary);
+    const ValueRenderer = R.propOr(MetricsRenderers.DEFAULT, id, MetricsRenderers);
+    return <Card key={id}>
+        <CardTitle>{summary.metrics.name}</CardTitle>
+        <CardText>
+            <ValueRenderer {...{summary}}/>
+        </CardText>
+    </Card>    
 }
 
 function SubjectDetails(props) {

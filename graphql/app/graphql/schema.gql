@@ -7,6 +7,8 @@ interface Node {
 }
 
 enum ValueType {
+    PERCENTAGE
+    COUNT
 	BOOLEAN
 	FLOAT
 	INT
@@ -32,6 +34,8 @@ type Metrics implements Node {
     category: String
     # unit of measurement for test (default: unit count)
     unit: String
+    # metrics under the same group are complementary
+    group: String
 }
 
 # Describes a metrics data point, collected during an assessment

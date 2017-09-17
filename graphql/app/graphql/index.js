@@ -46,11 +46,24 @@ module.exports.createSchema = (repos, logger) => {
                         },
                         goal: {
                             value: casual.random,
-                            matchBy: "GREATER_OR_EQUAL",                            
+                            matchBy: "GREATER_OR_EQUAL",          
                         },
                         value: casual.random,
                     },
-
+                    {
+                        metrics: {
+                            id: "PASSING_TESTS",
+                            name: "Passing tests",
+                            valueType: "FLOAT",
+                            optimizeFor: "MAX",
+                            normalized: true
+                        },
+                        goal: {
+                            value: 1,
+                            matchBy: "EQUALS",
+                        },
+                        value: casual.random,
+                    },                    
                 ]
             })
         }
