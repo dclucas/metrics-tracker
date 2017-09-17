@@ -44,6 +44,10 @@ module.exports.createSchema = (repos, logger) => {
                             optimizeFor: "MAX",
                             normalized: true
                         },
+                        goal: {
+                            value: casual.random,
+                            matchBy: "GREATER_OR_EQUAL",                            
+                        },
                         value: casual.random,
                     },
 

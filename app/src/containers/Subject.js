@@ -22,20 +22,24 @@ const fields = `
 name
 description
 metricsSummary {
-metrics {
-    id
-    name
-    valueType
-    optimizeFor
-    normalized
-    category
-}
-assessment {
-    id
-    type
-    createdOn
-}
-value
+    metrics {
+        id
+        name
+        valueType
+        optimizeFor
+        normalized
+        category
+    }
+    assessment {
+        id
+        type
+        createdOn
+    }
+    goal {
+        value
+        matchBy
+    }
+    value
 }
 `
 const data = graphql(gql `

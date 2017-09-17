@@ -1,9 +1,12 @@
 import React from 'react';
 import styled from 'styled-components';
+import * as R from 'ramda';
 
-const ValueContainer = styled.div``;
+// todo: refactor color to use theme
+const ValueContainer = styled.div`
+    color: ${({metGoal, goal}) => metGoal? 'green' : goal? 'red' : 'black' };
+`;
 
-/*
 const comparers = {
     EQUALS: R.equals,
     NOT_EQUALS: null,
@@ -11,22 +14,6 @@ const comparers = {
     LESSER_THAN: R.lt,
     GREATER_OR_EQUAL: R.gte,
     LESSER_OR_EQUAL: R.lte
-}
-
-const summary = {
-  assessment: {},
-  metrics: {
-    id: 'BRANCH_COVERAGE',
-    name: 'Branch Coverage',
-    normalized: true,
-    optimizeFor: "MAX",
-    valueType: "FLOAT",
-  },
-  goal: {
-    value: .8,
-    matchBy: 'GREATER_THAN',
-  },
-  value: .8479,
 }
 
 // todo: turn this into a "maybe"
@@ -38,19 +25,23 @@ const flattenSummary = (s) =>
   R.merge(
     R.pick(['value'], s), 
     R.reject(
-      R.isNil, { metGoal: metGoal(s)})
+      R.isNil, 
+      { 
+          metGoal: metGoal(s),
+          goal: R.path(['goal', 'value'], s),
+      })
   )
 
-//flattenSummary(summary)
-metGoal(summary)
-*/
-
-const flattenSummary = (summary) => summary;
+const maximumSignificantDigits = 3;
+const perc = (x) => Number(x).toLocaleString(undefined,{style: 'percent', maximumSignificantDigits})
+const frac = (x) => Number(x).toLocaleString(undefined,{maximumSignificantDigits})
 
 const PercentageRenderer = ({summary}) => (
-<ValueContainer>
-    {Math.round(summary.value * 1000) / 10}%
+<ValueContainer {...summary}
+>
+    {/*Math.round(summary.value * 1000) / 10*/}
+    {perc(summary.value)}
 </ValueContainer>)
 
-export const BRANCH_COVERAGE = ({summary}) => <PercentageRenderer {...{summary}}/>
+export const BRANCH_COVERAGE = ({summary}) => <PercentageRenderer {...{summary: flattenSummary(summary)}}/>
 export const DEFAULT = <PercentageRenderer />
