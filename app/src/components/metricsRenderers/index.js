@@ -1,26 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
 import * as R from 'ramda';
-import { PieChart, Pie, Sector, Cell } from 'recharts';
+import { PieChart, Pie, Cell } from 'recharts';
 import OkIcon from 'material-ui-icons/CheckCircle';
 import ErrorIcon from 'material-ui-icons/Error';
-import { GridList, GridListTile, GridListTileBar } from 'material-ui/GridList';
-import PropTypes from 'prop-types';
-import { withStyles } from 'material-ui/styles';
-import Card, { CardActions, CardContent, CardHeader, CardMedia } from 'material-ui/Card';
-import Button from 'material-ui/Button';
-import Typography from 'material-ui/Typography';
-
-// todo: refactor color to use theme
-const ValueContainer = styled.div`
-    color: ${({metGoal, goal}) => metGoal? 'green' : goal? 'red' : 'black' };
-    width: 100%;
-    font-size: 3em;
-    text-align: center;
-    margin: 0px;
-    margin-top: 1em;
-    padding: 0px;
-`;
+import Card from 'material-ui/Card';
 
 const comparers = {
     EQUALS: R.equals,
@@ -29,16 +13,6 @@ const comparers = {
     LESSER_THAN: R.lt,
     GREATER_OR_EQUAL: R.gte,
     LESSER_OR_EQUAL: R.lte
-}
-
-// todo: localize this
-const comparerTexts = {
-    EQUALS: 'does not equal',
-    NOT_EQUALS: 'equals',
-    GREATER_THAN: 'is not greater than',
-    LESSER_THAN: 'is less than',
-    GREATER_OR_EQUAL: 'is less than',
-    LESSER_OR_EQUAL: 'is greater than',
 }
 
 const colors = {
@@ -70,15 +44,10 @@ export const flattenSummary = (s) => {
     )
 }
 
-const maximumSignificantDigits = 3;
-const maximumFractionDigits = 2;
-// fixme: fix the 0.x case -- text is showing 3 digits instead of 2
-const perc = (x) => Number(x).toLocaleString(undefined,{style: 'percent', maximumSignificantDigits, maximumFractionDigits})
-const frac = (x) => Number(x).toLocaleString(undefined,{maximumSignificantDigits, maximumFractionDigits})
 const secondaryFill = '#e2e2e2'
 const neutralFill = '#666666'
 const renderCustomizedLabel = (input) => {
-    const { cx, cy, midAngle, innerRadius, outerRadius, percent, index, fill } = input;
+    const { cx, cy, midAngle, innerRadius, outerRadius, percent, fill } = input;
     if (fill === secondaryFill) return <text />;
     const RADIAN = Math.PI / 180;
     // fixme: fix the x/y calc
@@ -184,21 +153,7 @@ const IntRenderer = (summary) => <IntValueContainer
 export const DEFAULT = (props) => R.propOr(
     renderers.UNKNOWN, 
     R.pathOr('', ['summary','metrics','valueType'], props),
-    renderers)
-    (props);
-
-const SubjectTitle = styled.h1`
-`
-
-const MetricsHeader = styled.h2`
-`
-
-const MetricsContainer = styled.div``
-
-const SubjectDescription = styled.div`
-    color:${({palette}) => palette.secondaryTextColor};
-    font-size: small;
-`
+    renderers)(props);
 
 const MetricsListContainer = styled.div`
     display: flex;
