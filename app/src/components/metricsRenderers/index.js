@@ -4,6 +4,7 @@ import * as R from 'ramda';
 import { PieChart, Pie, Sector, Cell } from 'recharts';
 import OkIcon from 'material-ui-icons/CheckCircle';
 import ErrorIcon from 'material-ui-icons/Error';
+import { GridList, GridListTile, GridListTileBar } from 'material-ui/GridList';
 
 // todo: refactor color to use theme
 const ValueContainer = styled.div`
@@ -52,17 +53,16 @@ const metGoal = (summary) => summary.goal?
   : null
 
 export const flattenSummary = (s) => {
-    console.log('flattening', s);
-  return R.merge(
-    R.pick(['value'], s), 
-    R.reject(
-      R.isNil, 
-      { 
-          metGoal: metGoal(s),
-          goal: R.path(['goal', 'value'], s),
-          unit: R.path(['metrics', 'unit'], s),
-      })
-  )
+    return R.merge(
+        R.pick(['value'], s), 
+        R.reject(
+            R.isNil, 
+            { 
+                metGoal: metGoal(s),
+                goal: R.path(['goal', 'value'], s),
+                unit: R.path(['metrics', 'unit'], s),
+            })
+    )
 }
 
 const maximumSignificantDigits = 3;
@@ -146,9 +146,10 @@ const PercentageRenderer = ({value, metGoal, goal}) => {
     </PieChart>
 }
 
+// fixme: this code makes the (weak) assumption that 'true' is good. It should compare with the goal.
 const icons = {
-    0.0: <ErrorIcon style={{color:'red', width: '7em', height: '7em'}}/>,
-    1.0: <OkIcon style={{color:'green', width: '7em', height: '7em'}}/>,
+    0.0: <ErrorIcon style={{color:colors.notOkGoal, width: '7em', height: '7em'}}/>,
+    1.0: <OkIcon style={{color:colors.okGoal, width: '7em', height: '7em'}}/>,
 }
 const BooleanValueContainer = styled.div`
     text-align: center;
@@ -167,6 +168,7 @@ text-align: center;
 padding: 1em;
 font-size: xx-large;
 `
+
 const IntRenderer = (summary) => <IntValueContainer
     style={{color: pickColor(summary)}}
 >
@@ -174,5 +176,67 @@ const IntRenderer = (summary) => <IntValueContainer
 </IntValueContainer>
 
 // FIXME: refactor so that the whole metrics entry is wrapped in this module
-export const DEFAULT = (props) => 
-    R.propOr(renderers.UNKNOWN, R.pathOr('', ['summary','metrics','valueType'], props),renderers)(props);
+export const DEFAULT = (props) => R.propOr(
+    renderers.UNKNOWN, 
+    R.pathOr('', ['summary','metrics','valueType'], props),
+    renderers)
+    (props);
+
+const SubjectTitle = styled.h1`
+`
+
+const MetricsHeader = styled.h2`
+`
+
+const MetricsContainer = styled.div``
+
+const SubjectDescription = styled.div`
+    color:${({palette}) => palette.secondaryTextColor};
+    font-size: small;
+`
+
+const MetricsListContainer = styled(GridList)`
+    display: flex;
+    padding: .25em;
+`
+
+const MetricsEntryContainer = styled(GridListTile)`
+    width: 10em;
+    height: 10em;
+    margin: .25em;
+    border: 1px solid #9e9e9e;
+`
+
+const MetricsEntryHeader = styled(GridListTileBar)`
+`
+
+const MetricsEntryText = styled.div`
+    padding: 0px;
+    margin: 0px;
+`
+
+const MetricsEntry = (summary) => {
+    console.log(summary);
+    const id = R.path(['metrics', 'id'], summary);
+    //const ValueRenderer = R.propOr(MetricsRenderers.DEFAULT, id, MetricsRenderers);
+    const ValueRenderer = DEFAULT;
+    // todo: this whole thing should be moved to another module, as the renderer
+    // may use multiple columns, etc.
+    const flattened = flattenSummary(summary);
+    return <MetricsEntryContainer key={id}>
+        <MetricsEntryHeader
+            title={summary.metrics.name}
+            style={{backgroundColor: flattened.metGoal? 'green' : flattened.goal? 'red' : 'grey'}}
+        />
+        <MetricsEntryText>
+            <ValueRenderer {...{summary}} style={{padding:'0px',backgroundColor:'blue'}}/>
+        </MetricsEntryText>
+    </MetricsEntryContainer>    
+}
+
+const MetricsEntryList = ({subject}) => 
+    <MetricsListContainer cellHeight={200} cols={4}>  
+        { R.map(MetricsEntry, R.pathOr([], ['metricsSummary'], subject) ) }
+    </MetricsListContainer>
+
+export default MetricsEntryList;
