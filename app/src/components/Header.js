@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
-import Button from 'material-ui/RaisedButton';
+import Button from 'material-ui/Button';
 import './Header.css';
 import styled from 'styled-components';
-import muiThemeable from 'material-ui/styles/muiThemeable';
+import { withTheme } from 'material-ui/styles';
 
 const HeaderContainer = styled.div`
     width: 100%;
     height: 44px;
-    background-color: ${({palette}) => palette.primary1Color};
+    background-color: ${({palette}) => palette.primary[500]};
 `;
 
 const LeftContainer = styled.div`
@@ -21,7 +21,7 @@ const RightContainer = styled.div`
 
 const Title = styled.h1`
     margin: 1px;
-    color: ${({palette}) => palette.alternateTextColor }
+    color: ${({palette}) => palette.getContrastText(palette.primary[500]) }
 `
 
 class Header extends Component {
@@ -39,7 +39,7 @@ class Header extends Component {
 
   render() {
     const { isAuthenticated } = this.props.auth;
-    const { palette } = this.props.muiTheme;
+    const { palette } = this.props.theme;
     const MiddleContainer = styled.div`
         overflow: hidden;
     `;
@@ -54,10 +54,12 @@ class Header extends Component {
                 {
                 !isAuthenticated() && (
                     <Button
-                        primary={true}
+                        raised
+                        color="primary"
                         onClick={this.login.bind(this)}
-                        label="Log In"
-                    />
+                    >
+                    Log in
+                    </Button>
                     )
                 }
                 {
@@ -76,4 +78,4 @@ class Header extends Component {
   }
 }
 
-export default muiThemeable()(Header);
+export default withTheme(Header);

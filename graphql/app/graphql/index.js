@@ -40,21 +40,21 @@ module.exports.createSchema = (repos, logger) => {
                         metrics: {
                             id: "BRANCH_COVERAGE",
                             name: "Branch coverage",
-                            valueType: "FLOAT",
+                            valueType: "PERCENTAGE",
                             optimizeFor: "MAX",
                             normalized: true
                         },
                         goal: {
-                            value: casual.random,
+                            value: .85,
                             matchBy: "GREATER_OR_EQUAL",          
                         },
-                        value: casual.random,
+                        value: .90,
                     },
                     {
                         metrics: {
                             id: "PASSING_TESTS",
                             name: "Passing tests",
-                            valueType: "FLOAT",
+                            valueType: "PERCENTAGE",
                             optimizeFor: "MAX",
                             normalized: true
                         },
@@ -62,8 +62,51 @@ module.exports.createSchema = (repos, logger) => {
                             value: 1,
                             matchBy: "EQUALS",
                         },
-                        value: casual.random,
+                        value: .97,
                     },                    
+                    {
+                        metrics: {
+                            id: "BUILD_SUCCEEDED",
+                            name: "Build success",
+                            valueType: "BOOLEAN",
+                            optimizeFor: "MAX",
+                            category: "build",
+                        },
+                        goal: {
+                            value: 1,
+                            matchBy: "EQUALS",
+                        },
+                        value: 1,
+                    },                    
+                    {
+                        metrics: {
+                            id: "BUILD_DURATION",
+                            name: "Build duration",
+                            valueType: "INT",
+                            optimizeFor: "MIN",
+                            unit: "ms",
+                            category: "build",
+                        },
+                        goal: {
+                            value: 60000,
+                            matchBy: "LESSER_OR_EQUAL",
+                        },
+                        value: 27148,
+                    },                   
+                    {
+                        metrics: {
+                            id: "UNKNOWN_METRIC",
+                            name: "Completely unknown metric",
+                            valueType: "PERCENTAGE",
+                            optimizeFor: "MIN",
+                            category: "unknown",
+                        },
+                        goal: {
+                            value: .82,
+                            matchBy: "GREATER_OR_EQUAL",
+                        },
+                        value: .103,
+                    },                   
                 ]
             })
         }

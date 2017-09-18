@@ -1,7 +1,7 @@
 import React from 'react';
 import {pure, compose} from 'recompose';
 import {gql, graphql} from 'react-apollo'
-import CircularProgress from 'material-ui/CircularProgress';
+import { CircularProgress } from 'material-ui/Progress';
 import * as R from 'ramda';
 import Header from '../components/Header';
 import SubjectDetails from '../components/SubjectDetails';
@@ -29,6 +29,7 @@ metricsSummary {
         optimizeFor
         normalized
         category
+        unit
     }
     assessment {
         id
