@@ -5,7 +5,6 @@ import Routes from './Routes'
 import registerServiceWorker from './registerServiceWorker'
 import { ApolloProvider, ApolloClient, createNetworkInterface } from 'react-apollo'
 import injectTapEventPlugin from 'react-tap-event-plugin'
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import { BrowserRouter } from 'react-router-dom'
 import Auth from './Auth'
 
@@ -35,11 +34,11 @@ const client = new ApolloClient({
 });
 
 ReactDOM.render(
-    <ApolloProvider client={client}>
-      <BrowserRouter>
-        <Routes />
-      </BrowserRouter>
-    </ApolloProvider>
+  <ApolloProvider client={client}>
+    <BrowserRouter>
+      <Routes />
+    </BrowserRouter>
+  </ApolloProvider>
   ,
   document.getElementById('root'),
 );

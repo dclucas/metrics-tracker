@@ -5,6 +5,11 @@ import { PieChart, Pie, Sector, Cell } from 'recharts';
 import OkIcon from 'material-ui-icons/CheckCircle';
 import ErrorIcon from 'material-ui-icons/Error';
 import { GridList, GridListTile, GridListTileBar } from 'material-ui/GridList';
+import PropTypes from 'prop-types';
+import { withStyles } from 'material-ui/styles';
+import Card, { CardActions, CardContent, CardHeader, CardMedia } from 'material-ui/Card';
+import Button from 'material-ui/Button';
+import Typography from 'material-ui/Typography';
 
 // todo: refactor color to use theme
 const ValueContainer = styled.div`
@@ -195,28 +200,48 @@ const SubjectDescription = styled.div`
     font-size: small;
 `
 
-const MetricsListContainer = styled(GridList)`
+const MetricsListContainer = styled.div`
     display: flex;
+    margin: 1em;
     padding: .25em;
+    width: 100%;
+    max-width: 100%;
+    flex-wrap: wrap;
 `
 
-const MetricsEntryContainer = styled(GridListTile)`
-    width: 10em;
-    height: 10em;
+
+const MetricsEntryContainer = styled(Card)`
+    min-width: 12em;
+    max-width: 12em;
+    height: 14em;
     margin: .25em;
+    padding: 0px;
     border: 1px solid #9e9e9e;
 `
 
-const MetricsEntryHeader = styled(GridListTileBar)`
+const MetricsEntryTitle = styled.h3`
+    margin: .5em;
+    text-align: center;
 `
 
-const MetricsEntryText = styled.div`
+const MetricsEntryHeader = styled.div`
+    /*background-color: ${({metGoal, goal}) => metGoal? 'green' : goal? 'red' : 'grey'};
+    color: white;*/
+    margin: 0px;
+    padding: 0px;
+    width:100%;
+    height: 4em;
+` 
+
+
+const MetricsEntryContent = styled.div`
     padding: 0px;
     margin: 0px;
+    height: 100%;
+    width: 100%;
 `
 
 const MetricsEntry = (summary) => {
-    console.log(summary);
     const id = R.path(['metrics', 'id'], summary);
     //const ValueRenderer = R.propOr(MetricsRenderers.DEFAULT, id, MetricsRenderers);
     const ValueRenderer = DEFAULT;
@@ -224,13 +249,12 @@ const MetricsEntry = (summary) => {
     // may use multiple columns, etc.
     const flattened = flattenSummary(summary);
     return <MetricsEntryContainer key={id}>
-        <MetricsEntryHeader
-            title={summary.metrics.name}
-            style={{backgroundColor: flattened.metGoal? 'green' : flattened.goal? 'red' : 'grey'}}
-        />
-        <MetricsEntryText>
+        <MetricsEntryHeader {...flattened}>
+            <MetricsEntryTitle>{summary.metrics.name}</MetricsEntryTitle>
+        </MetricsEntryHeader>
+        <MetricsEntryContent>
             <ValueRenderer {...{summary}} style={{padding:'0px',backgroundColor:'blue'}}/>
-        </MetricsEntryText>
+        </MetricsEntryContent>
     </MetricsEntryContainer>    
 }
 
