@@ -29,7 +29,8 @@
     "ramda-fantasy": "^0.8.0",
     "require-text": "^0.0.1",
     "sanctuary": "^0.13.2",
-    "sanctuary-type-classes": "^6.0.0"
+    "sanctuary-type-classes": "^6.0.0",
+    "uuid": "^3.1.0"
   },
   "devDependencies": {
     "nodemon": "^1.11.0"
