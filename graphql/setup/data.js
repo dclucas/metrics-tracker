@@ -130,7 +130,10 @@ enum MatchKind {
 */
 const goals = {
     standard: [
-        { metrics: metrics.branchCoverage, value: .8,  matchBy: 'GREATER_OR_EQUAL'},
+        { metrics: metrics.branchCoverage, value: .8,  matchBy: 'GREATER_OR_EQUAL', weight: 0.8},
+        { metrics: metrics.buildDuration, value: 60000,  matchBy: 'LESSER_OR_EQUAL', weight: 0.2},
+        { metrics: metrics.buildSucceeded, value: 1,  matchBy: 'EQUALS', weight: 1.0},
+        { metrics: metrics.failingTests, value: 0,  matchBy: 'EQUALS', weight: 1.0},
     ]
 }
 
