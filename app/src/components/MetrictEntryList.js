@@ -16,9 +16,11 @@ const comparers = {
 }
 
 const colors = {
-    'okGoal': 'green',
-    'notOkGoal': 'red',
-    'noGoal': 'grey',
+    okGoal: 'green',
+    notOkGoal: 'red',
+    noGoal: 'grey',
+    secondaryFill: '#e2e2e2',
+    neutralFill: '#666666',
 }
 
 const pickColor = (flattenedSummary) => R.cond([
@@ -44,11 +46,9 @@ export const flattenSummary = (s) => {
     )
 }
 
-const secondaryFill = '#e2e2e2'
-const neutralFill = '#666666'
 const renderCustomizedLabel = (input) => {
     const { cx, cy, midAngle, innerRadius, outerRadius, percent, fill } = input;
-    if (fill === secondaryFill) return <text />;
+    if (fill === colors.secondaryFill) return <text />;
     const RADIAN = Math.PI / 180;
     // fixme: fix the x/y calc
     const radius = innerRadius + (outerRadius - innerRadius) * .2;
@@ -63,8 +63,8 @@ const renderCustomizedLabel = (input) => {
 };
 
 const renderGoalLabel = (input) => {
-    if (input.fill === neutralFill) {
-        return <text x={155} y={25} fill={neutralFill}>goal</text>
+    if (input.fill === colors.neutralFill) {
+        return <text x={155} y={25} fill={colors.neutralFill}>goal</text>
     }
     return null;
 }
@@ -74,12 +74,12 @@ const getPercData = (val) => R.pair(
     {value: 1-val},
 );
 
-const PercentageRenderer = ({value, metGoal, goal}) => {
-    const data = getPercData(value);
-    const goalData = getPercData(goal);
-    const primaryFill = metGoal? 'green': goal? 'red' : 'grey';
-    const colors = [primaryFill, secondaryFill];
-    const goalColors = [neutralFill, 'white'];
+const PercentageRenderer = (summary) => {
+    const data = getPercData(summary.value);
+    const goalData = getPercData(summary.goal);
+    const primaryFill = pickColor(summary);
+    const primaryColors = [primaryFill, colors.secondaryFill];
+    const goalColors = [colors.neutralFill, 'white'];
     return <PieChart width={200} height={150}>
         <Pie
             label={renderCustomizedLabel} 
@@ -93,12 +93,12 @@ const PercentageRenderer = ({value, metGoal, goal}) => {
         >
         {
             data.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={colors[index]}/>
+                <Cell key={`cell-${index}`} fill={primaryColors[index]}/>
               ))
         }
         </Pie>
         {
-            goal? <Pie
+            summary.goal? <Pie
             label={renderGoalLabel} 
             labelLine={false}
             dataKey='value'
@@ -164,7 +164,6 @@ const MetricsListContainer = styled.div`
     flex-wrap: wrap;
 `
 
-
 const MetricsEntryContainer = styled(Card)`
     min-width: 12em;
     max-width: 12em;
@@ -180,8 +179,6 @@ const MetricsEntryTitle = styled.h3`
 `
 
 const MetricsEntryHeader = styled.div`
-    /*background-color: ${({metGoal, goal}) => metGoal? 'green' : goal? 'red' : 'grey'};
-    color: white;*/
     margin: 0px;
     padding: 0px;
     width:100%;

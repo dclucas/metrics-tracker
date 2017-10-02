@@ -1,13 +1,53 @@
-version: '2'
+version: '3'
 services:
-  influx:
-    image: influxdb:1.0.0-alpine
+  db:
+    image: mongo:3.4
+    ports:
+      - 27017:27017
+  uploadapi:
+    build:
+      context: uploadapi
+    ports:
+      - 3001:3001
+    environment:
+      - AUTH0_DOMAIN
+      - AUTH0_AUDIENCE
+      - DISABLE_AUTH
+      - LOG_LEVEL
+      - NODE_ENV
+      - PORT=3001
+      - MONGODB_URL=mongodb://db:27017/metrics
     volumes:
-        - /var/lib/influxdb
+      - ./uploadapi:/app/
+  graphqlapi:
+    build:
+      context: graphql
     ports:
-      - "8083:8083"
-      - "8086:8086"
-  grafana:
-    image: grafana/grafana:3.1.1
+      - 3002:3002
+    environment:
+      - AUTH0_DOMAIN
+      - AUTH0_AUDIENCE
+      - DISABLE_AUTH
+      - LOG_LEVEL
+      - NODE_ENV
+      - PORT=3002
+      - MONGODB_URL=mongodb://db:27017/metrics
+    volumes:
+      - ./graphql:/app/
+  app:
+    build:
+      context: app
     ports:
-      - "3000:3000"
+      - 3000:3000
+    volumes:
+      - ./app:/app/
+    environment:
+      - PORT=3000
+      - REACT_APP_DOMAIN
+      - REACT_APP_CLIENT_ID
+      - GRAPHQL_URL=http://localhost:3002
+      # since it's a browser-rendered app, we point to localhost, 
+      # an address the browser understands
+      - REACT_APP_CALLBACK_URL=http://localhost:3000
+      - REACT_APP_GRAPHQL_URL=http://localhost:3001/graphql?
+      

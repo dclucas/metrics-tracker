@@ -24,6 +24,7 @@
     "graphql-iso-date": "^3.3.0",
     "graphql-tools": "^1.2.2",
     "moment": "^2.18.1",
+    "mongodb": "^2.2.31",
     "ramda": "^0.24.1",
     "ramda-fantasy": "^0.8.0",
     "require-text": "^0.0.1",

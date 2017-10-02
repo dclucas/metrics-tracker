@@ -10,4 +10,5 @@ const app = require('./index').createApp(schema);
 module.exports = {
     resolveConfig: () => config,
     resolveApp : () => app,
+    resolveLogger: () => logger,
 }

@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { withTheme } from 'material-ui/styles';
-import MetrictEntryList from './metricsRenderers';
+import MetrictEntryList from './MetrictEntryList';
 
 const SubjectTitle = styled.h1``
 

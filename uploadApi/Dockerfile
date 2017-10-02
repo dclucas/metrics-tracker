@@ -1,13 +1,12 @@
-FROM node:6.0
+FROM node:8.2.1-alpine
 
-RUN mkdir /usr/src/app
-WORKDIR /usr/src/app
+RUN npm install -g yarn
 
-COPY package.json /usr/src/app
-RUN npm install --dev
+RUN mkdir app
+WORKDIR app
 
-COPY . /usr/src/app
+COPY package.json ./package.json
+RUN yarn
 
-EXPOSE 2426
-
-CMD npm start
+COPY . ./
+CMD yarn start
