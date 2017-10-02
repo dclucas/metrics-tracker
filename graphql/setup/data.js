@@ -77,7 +77,7 @@ const valueGenerators = {
     "COUNT": () => casual.integer(0),
     "INT": () => casual.integer(0),
     "FLOAT": () => casual.double(0),
-    "BOOLEAN": () => casual.coin_flip,
+    "BOOLEAN": () => casual.coin_flip? 1 : 0,
 }
 
 const getGoalMetrics = (metrics, subject) => R.find(g => g.metrics._id === metrics._id, R.propOr([], 'goals', subject));
@@ -102,32 +102,6 @@ const createAssessments = (subject, tag) => ({
     )(R.values(metrics)),
 });
 
-/*
-# Represents a subject goal for a given metric
-type MetricsGoal {
-    # Which metrics this goal relates to
-    metrics: Metrics!
-    # Desired value for the metrics
-    value: Float
-    # How to evaluate the desired value against the current one
-    matchBy: MatchKind
-    # How important (normalized) this goal is
-    weight: Float
-    # add matchWith <- how to compare the current value: current only (default), previous, previous N, mean, average, max
-    # The subject that owns the goal
-    subject: Subject
-}
-*/
-/*
-enum MatchKind {
-    EQUALS
-    NOT_EQUALS
-    GREATER_THAN
-    LESSER_THAN
-    GREATER_OR_EQUAL
-    LESSER_OR_EQUAL
-}
-*/
 const goals = {
     standard: [
         { metrics: metrics.branchCoverage, value: .8,  matchBy: 'GREATER_OR_EQUAL', weight: 0.8},

@@ -47,8 +47,10 @@ type Measurement implements Node {
     value: Float!
     # parent assessment
     assessment: Assessment!
-    # determines the goal at the moment of metric creation. 
+    # the goal at the moment of the measurement took place
     goal: MetricsGoal
+    # whether the goal was met or not (null indicates no goal)
+    metGoal: Boolean
 }
 
 # Represents a collection of metrics data points, gathered at a specific point in time
