@@ -126,7 +126,13 @@ const subjects = {
         description: casual.description,
         goals: goals.standard,
         //metricsSummary: createAssessments({ _id: "PROJ-01", goals: goals.standard }, 175).measurements,
-        metricsSummary: R.map(R.merge({ assessment: R.omit('measurements', assessments.proj01_175) }), assessments.proj01_175.measurements),
+        metricsSummary: 
+            R.map(
+                R.merge(
+                    { assessment: R.omit('measurements', assessments.proj01_175) }
+                ),
+                assessments.proj01_175.measurements
+            ),
     },
 }
 

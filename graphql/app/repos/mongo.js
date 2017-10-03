@@ -6,9 +6,10 @@ const R = require('ramda');
 const { MongoClient } = require('mongodb');
 const uuid = require('uuid');
 
-const transformSchema = module.exports.transformSchema = entry => entry? R.assoc('id', entry._id, R.omit('_id', entry)) : null;
+const transformSchema = module.exports.transformSchema = mapSchema;
 
-const transformSchemaP = entryP => entryP.then(entry => entry? R.assoc('id', entry._id, R.omit('_id', entry)) : null);
+//const transformSchemaP = entryP => entryP.then(entry => entry? R.assoc('id', entry._id, R.omit('_id', entry)) : null);
+const transformSchemaP = entryP => entryP.then(mapSchema);
 
 const transformSchemas = col => R.map(transformSchema, col);
 
@@ -17,7 +18,10 @@ const transformSchemasP = colP => colP.then(transformSchemas);
 const transformInput = module.exports.transformInput = entry => entry? R.assoc('_id', entry.id, R.omit('id', entry)) : null;
 
 function mapSchema(entry) {
-    return entry? R.assoc('id', entry._id, R.omit('_id', entry)) : null;
+    // fixme: this horrid conversion is not performant -- change it to proper key replacement
+    const entryStr = JSON.stringify(entry).replace(/"_id":/g, '"id":');
+    console.log(entryStr);
+    return JSON.parse(entryStr);
 }
 
 
