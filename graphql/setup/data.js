@@ -111,21 +111,23 @@ const goals = {
     ]
 }
 
+const assessments = {
+    proj01_171: createAssessments({ _id: "PROJ-01", goals: goals.standard }, 171),
+    proj01_172: createAssessments({ _id: "PROJ-01", goals: goals.standard }, 172),
+    proj01_173: createAssessments({ _id: "PROJ-01", goals: goals.standard }, 173),
+    proj01_174: createAssessments({ _id: "PROJ-01", goals: goals.standard }, 174),
+    proj01_175: createAssessments({ _id: "PROJ-01", goals: goals.standard }, 175),
+}
+
 const subjects = {
     proj01: {
         _id: "PROJ-01",
         name: casual.title,
         description: casual.description,
         goals: goals.standard,
+        //metricsSummary: createAssessments({ _id: "PROJ-01", goals: goals.standard }, 175).measurements,
+        metricsSummary: R.map(R.merge({ assessment: R.omit('measurements', assessments.proj01_175) }), assessments.proj01_175.measurements),
     },
-}
-
-const assessments = {
-    proj01_171: createAssessments(subjects.proj01, 171),
-    proj01_172: createAssessments(subjects.proj01, 172),
-    proj01_173: createAssessments(subjects.proj01, 173),
-    proj01_174: createAssessments(subjects.proj01, 174),
-    proj01_175: createAssessments(subjects.proj01, 175),
 }
 
 module.exports = {

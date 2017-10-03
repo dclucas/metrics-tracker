@@ -3,7 +3,9 @@
 const pck = require('../package');
 const config = require('./config');
 const logger = require('./logger').createLogger(config, pck);
-const repos = null;
+const repos = {
+    subject: require('./repos/mongo').createRepo('subjects', config, logger),
+};
 const schema = require('./graphql').createSchema(repos, logger);
 const app = require('./index').createApp(schema);
 
