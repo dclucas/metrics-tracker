@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "mongo-func": "^0.0.9"
+  }
+}
