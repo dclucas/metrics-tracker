@@ -92,9 +92,9 @@ const createMeasurement = (metrics, subject) => {
         : res;
 }
 
-const createAssessments = (subject, tag) => ({
+const createAssessments = (subject, tag, createdOn) => ({
     _id: `${subject._id}/BUILD-${tag}`,
-    //createdOn: casual.date(format = moment.ISO_8601),
+    createdOn,
     type: "BUILD",
     subjectId: subject._id,
     measurements: R.map(
@@ -112,11 +112,11 @@ const goals = {
 }
 
 const assessments = {
-    proj01_171: createAssessments({ _id: "PROJ-01", goals: goals.standard }, 171),
-    proj01_172: createAssessments({ _id: "PROJ-01", goals: goals.standard }, 172),
-    proj01_173: createAssessments({ _id: "PROJ-01", goals: goals.standard }, 173),
-    proj01_174: createAssessments({ _id: "PROJ-01", goals: goals.standard }, 174),
-    proj01_175: createAssessments({ _id: "PROJ-01", goals: goals.standard }, 175),
+    proj01_171: createAssessments({ _id: "PROJ-01", goals: goals.standard }, 171, '2017-10-01T08:15:30Z'),
+    proj01_172: createAssessments({ _id: "PROJ-01", goals: goals.standard }, 172, '2017-10-01T09:15:30Z'),
+    proj01_173: createAssessments({ _id: "PROJ-01", goals: goals.standard }, 173, '2017-10-01T10:15:30Z'),
+    proj01_174: createAssessments({ _id: "PROJ-01", goals: goals.standard }, 174, '2017-10-01T11:15:30Z'),
+    proj01_175: createAssessments({ _id: "PROJ-01", goals: goals.standard }, 175, '2017-10-01T12:15:30Z'),
 }
 
 const subjects = {
