@@ -133,6 +133,7 @@ const renderers = {
     "PERCENTAGE": ({summary}) => PercentageRenderer(flattenSummary(summary)),
     "BOOLEAN": ({summary}) => BooleanRenderer(flattenSummary(summary)),
     "INT": ({summary}) => IntRenderer(flattenSummary(summary)),
+    "COUNT": ({summary}) => IntRenderer(flattenSummary(summary)),
     "UNKNOWN": (props) => { console.log(props); return <div>Dunno</div>; },
 }
 const BooleanRenderer = ({value}) => <BooleanValueContainer>{icons[value]}</BooleanValueContainer>
@@ -146,7 +147,7 @@ font-size: xx-large;
 const IntRenderer = (summary) => <IntValueContainer
     style={{color: pickColor(summary)}}
 >
-    {`${summary.value} ${summary.unit}`}
+    {summary.unit? `${summary.value} ${summary.unit}` : summary.value}
 </IntValueContainer>
 
 // FIXME: refactor so that the whole metrics entry is wrapped in this module

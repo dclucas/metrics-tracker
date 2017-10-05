@@ -69,6 +69,7 @@ const metrics = {
         valueType: "INT",
         optimizeFor: "MIN",
         category: "build",
+        unit: "ms",
     },
 }
 
