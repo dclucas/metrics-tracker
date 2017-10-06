@@ -21,6 +21,13 @@ const Subject = (props) => {
 const fields = `
 name
 description
+goals {
+    value
+    matchBy
+    metrics {
+        id
+    }
+}
 metricsSummary {
     metrics {
         id
@@ -35,10 +42,6 @@ metricsSummary {
         id
         type
         createdOn
-    }
-    goal {
-        value
-        matchBy
     }
     value
 }

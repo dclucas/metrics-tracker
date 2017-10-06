@@ -47,10 +47,6 @@ type Measurement implements Node {
     value: Float!
     # parent assessment
     assessment: Assessment!
-    # the goal at the moment of the measurement took place
-    goal: MetricsGoal
-    # whether the goal was met or not (null indicates no goal)
-    metGoal: Boolean
 }
 
 # Represents a collection of metrics data points, gathered at a specific point in time
@@ -96,6 +92,11 @@ type MetricsGoal {
     # add matchWith <- how to compare the current value: current only (default), previous, previous N, mean, average, max
     # The subject that owns the goal
     subject: Subject
+}
+
+enum snapshotKind {
+    LATEST
+    SPARSE
 }
 
 # A subject of metrics gathering

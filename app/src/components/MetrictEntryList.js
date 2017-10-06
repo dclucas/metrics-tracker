@@ -133,7 +133,7 @@ const renderers = {
     "PERCENTAGE": ({summary}) => PercentageRenderer(flattenSummary(summary)),
     "BOOLEAN": ({summary}) => BooleanRenderer(flattenSummary(summary)),
     "INT": ({summary}) => IntRenderer(flattenSummary(summary)),
-    "COUNT": ({summary}) => IntRenderer(flattenSummary(summary)),
+    "COUNT": ({summary}) => CountRenderer(flattenSummary(summary)),
     "UNKNOWN": (props) => { console.log(props); return <div>Dunno</div>; },
 }
 const BooleanRenderer = ({value}) => <BooleanValueContainer>{icons[value]}</BooleanValueContainer>
@@ -147,7 +147,13 @@ font-size: xx-large;
 const IntRenderer = (summary) => <IntValueContainer
     style={{color: pickColor(summary)}}
 >
-    {summary.unit? `${summary.value} ${summary.unit}` : summary.value}
+    { `${summary.value} ${summary.unit}` }
+</IntValueContainer>
+
+const CountRenderer = (summary) => <IntValueContainer
+    style={{color: pickColor(summary)}}
+>
+    { summary.value }
 </IntValueContainer>
 
 // FIXME: refactor so that the whole metrics entry is wrapped in this module
@@ -211,9 +217,18 @@ const MetricsEntry = (summary) => {
     </MetricsEntryContainer>    
 }
 
-const MetricsEntryList = ({subject}) => 
-    <MetricsListContainer cellHeight={200} cols={4}>  
-        { R.map(MetricsEntry, R.pathOr([], ['metricsSummary'], subject) ) }
+const MetricsEntryList = ({subject}) => {
+    console.log(JSON.stringify(subject));
+    const ms = R.propOr([], 'metricsSummary', subject);    
+    const g = R.propOr([], 'goals', subject);    
+    const pathMatch = R.eqBy(R.path(['metrics', 'id']));
+    const summaries = R.map(
+      m => R.merge(m, { goal: R.find(pathMatch(m), g) }),
+      ms);
+    
+    return  <MetricsListContainer cellHeight={200} cols={4}>  
+        { R.map(MetricsEntry, summaries ) }
     </MetricsListContainer>
+}
 
 export default MetricsEntryList;
