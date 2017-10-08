@@ -31,7 +31,6 @@
     "hapi-swagger": "^2.2.4",
     "immutable": "^3.8.1",
     "inert": "^3.2.0",
-    "influx": "^4.2.2",
     "joi": "^7.0.1",
     "lcov-parse": "0.0.10",
     "lodash": "^4.11.1",

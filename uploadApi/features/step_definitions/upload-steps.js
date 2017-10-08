@@ -6,7 +6,6 @@ module.exports = function() {
     const chaiSubset = require('chai-subset');
     const uuid = require('uuid');
     const cfg = require('../../app/config');
-    const influx = require('influx')(cfg.influxUrl);
     const measurements = {
         'cucumber.json': 'cucumber',
         'lcov.info': 'coverage',
@@ -79,24 +78,5 @@ module.exports = function() {
             this.response = response;
             return response;
         });
-    });
-
-    this.Then(/^the corresponding metrics get created$/, function () {
-        //todo: change this delay for something less flaky (such as watching SSE)
-        return Promise.delay(2000).then(() => new Promise((resolve, reject) =>
-            influx.query(`SELECT * FROM ${measurements[this.reportKind]} WHERE evaluationTag='${this.evaluationTag}'`,
-                (err, results) => {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        expect(results).not.to.be.empty;
-                        const metrics = results[0];
-                        expect(metrics).not.to.be.empty;
-                        expect(metrics).to.containSubset(this.expectedMeasurements);
-                        resolve(true);
-                    }
-                }
-            )
-        ));
     });
 };

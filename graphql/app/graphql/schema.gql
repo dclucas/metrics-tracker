@@ -94,9 +94,9 @@ type MetricsGoal {
     subject: Subject
 }
 
-enum snapshotKind {
-    LATEST
-    SPARSE
+type MeasurementSnapshot {
+    latest: [Measurement]
+    sparseList: [[Measurement]]
 }
 
 # A subject of metrics gathering
