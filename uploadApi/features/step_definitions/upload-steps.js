@@ -1,17 +1,15 @@
-module.exports = function() {
-    const _ = require('lodash');
-    const Promise = require('bluebird');
-    const chai = require('chai');
-    const expect = chai.expect;
-    const chaiSubset = require('chai-subset');
-    const uuid = require('uuid');
-    const cfg = require('../../app/config');
-    const measurements = {
-        'cucumber.json': 'cucumber',
-        'lcov.info': 'coverage',
-        'eslint.json': 'eslint'
-    };
+const _ = require('lodash');
+const chai = require('chai');
+const expect = chai.expect;
+const chaiSubset = require('chai-subset');
+const uuid = require('uuid');
+const measurements = {
+    'cucumber.json': 'cucumber',
+    'lcov.info': 'coverage',
+    'eslint.json': 'eslint'
+};
 
+module.exports = function() {
     chai.use(chaiSubset);
 
     this.Given(/^a ([\w\.]+) report file$/, function (report) {

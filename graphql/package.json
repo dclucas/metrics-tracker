@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node index.js",
     "mon": "nodemon",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "./node_modules/.bin/cucumber.js"
   },
   "keywords": [],
   "author": "",
@@ -16,8 +16,6 @@
     "body-parser": "^1.18.0",
     "bunyan": "^1.8.12",
     "casual": "^1.5.17",
-    "chai": "^4.1.2",
-    "chai-subset": "^1.6.0",
     "cors": "^2.8.4",
     "cucumber": "^3.0.4",
     "dotenv": "^4.0.0",
@@ -28,7 +26,6 @@
     "graphql": "^0.11.3",
     "graphql-iso-date": "^3.3.0",
     "graphql-tools": "^2.2.1",
-    "istanbul": "^0.4.5",
     "moment": "^2.18.1",
     "mongodb": "^2.2.31",
     "ramda": "^0.24.1",
@@ -40,6 +37,11 @@
     "uuid": "^3.1.0"
   },
   "devDependencies": {
+    "chai": "^4.1.2",
+    "chai-subset": "^1.6.0",
+    "got": "^7.0.0",
+    "graphql-client": "^2.0.0",
+    "istanbul": "^0.4.5",
     "nodemon": "^1.11.0"
   }
 }
