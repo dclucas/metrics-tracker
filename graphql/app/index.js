@@ -1,20 +1,40 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const { graphqlExpress, graphiqlExpress } = require('apollo-server-express');
-const cors = require('cors')
+const hapi = require('hapi');
+const { forEach, keys } = require('ramda');
+const { graphqlHapi, graphiqlHapi } = require('apollo-server-hapi');
 
-module.exports.createApp = (schema) => {
-    const app = express();
+module.exports.createApp = (schema, config, routes, emitter, logger) => {
+    const server = new hapi.Server({ debug: { request: '*' } });
     
-    app.use(cors());
+    const { port } = config;
+    
+    server.connection({
+        port,
+    });
+    
+    server.register([{
+        register: graphqlHapi,
+        options: {
+            path: '/graphql',
+            graphqlOptions: {
+                schema,
+            },
+            route: {
+                cors: true
+            }
+        },
+    }, {
+        register: graphiqlHapi,
+        options: {
+            path: '/graphiql',
+            graphiqlOptions: {
+                endpointURL: '/graphql',
+            },
+        },
+    }]);
 
-    app.use('/graphql', bodyParser.json(), graphqlExpress({
-        schema: schema
-    }));
-
-    app.use('/graphiql', graphiqlExpress({
-        endpointURL: '/graphql',
-    }));
-
-    return app;
-}
+    forEach(k => {
+        logger.info(`registering route ${k}`);
+        routes[k](server, emitter);
+    }, keys(routes));
+    return server;
+};

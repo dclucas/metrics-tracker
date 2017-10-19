@@ -93,24 +93,3 @@ const createBaseRepo = module.exports.createRepo = function (collectionName, con
         update: async (criteria, update) => client.update(collectionName, criteria, update)(),
     }
 }
-
-/*
-'use strict'
-
-const R = require('ramda');
-    
-function createRepo(colName) {
-    const collection = collections[colName];
-    return {
-        find: () => { collection },
-        findById: (id) => { R.find(i => i.id === id, collection) },
-        add: (entry) => { collections[colName] = R.append(entry, collection) },
-        delete: (id) => { collections[colName] = R.omit(i => i.id === id, collection) },
-        update: () => {},
-    }
-}
-
-const repos = {}
-
-module.exports = repos;
-*/

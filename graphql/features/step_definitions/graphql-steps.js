@@ -58,31 +58,10 @@ defineSupportCode(function({Given, When, Then}) {
             .then(body => that.response = body);
     });
 
-    Then('I receive a valid response', function (callback) {
+    Then('I receive a valid response', function () {
+        // fixme: the only value of this test is to check data came as expected, as
+        // there are easier ways to enforce contract expectations. either check the data
+        // or kill this test
         expect(this.response).to.exist;
-        console.log(this.data);
-        // Write code here that turns the phrase above into concrete actions
-        callback(null, 'pending');
     });        
 });
-
-/*
-import ApolloClient, { HttpLink } from 'apollo-client-preset';
-
-const client = new ApolloClient({
-  link: new HttpLink({
-    uri: 'https://graphql.example.com',
-  }),
-});
-
-client.query({
-    query: gql("{ hello }"),
-})
-    .catch(function(err){
-        console.error(err);
-    })
-    .then(function(data){
-        console.log(data);
-    })
-    ;
-*/

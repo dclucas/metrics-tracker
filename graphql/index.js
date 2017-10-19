@@ -1,6 +1,7 @@
 const factory = require('./app/factory');
 
 const app = factory.resolveApp();
-const { port } = factory.resolveConfig();
+const logger = factory.resolveLogger();
 
-app.listen(port);
+app.start()
+    .then(() => logger.info('app started'));
